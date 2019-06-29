@@ -1,0 +1,19 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  #Build all images wich you want to use in script section
+  - docker build -t fazan/fazan-api-test -f ./Dockerfile.dev .
+
+script: 
+  #Here you can define what scripts you want like running tests
+  - docker run fazan/fazan-api-test npm test
+
+after_success:
+  #Here we will build the prod docker images and push them to dockerhub
+  - docker build -t fazan-api .
+  #Login to dockerhub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #Take the built images and push them to dockerhub
+  - docker push giurgibogdan/fazan:fazan-api

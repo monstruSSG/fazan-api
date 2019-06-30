@@ -14,7 +14,7 @@ after_success:
   #Here we will build the prod docker images and push them to dockerhub
   - docker build -t giurgibogdan/fazan:fazan-api .
   #Login to dockerhub
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   #Take the built images and push them to dockerhub
   - docker push giurgibogdan/fazan:fazan-api
 

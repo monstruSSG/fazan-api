@@ -10,7 +10,7 @@ services:
       context: .
     volumes:
       - /app/node_modules
-      - ./:/app
+      - .:/app
     links:
       - mongo
     environment: 

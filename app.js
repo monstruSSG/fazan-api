@@ -32,6 +32,5 @@ app.use(notFound);
 
 app.use(errorHandler);
 
-app.listen(CONFIG.PORT,
-    () => console.log(`App listening on port ${CONFIG.PORT}`));
+app.listen(CONFIG.PORT, () => console.log(`App listening on port ${CONFIG.PORT}`));
 

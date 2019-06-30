@@ -17,3 +17,4 @@ after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   #Take the built images and push them to dockerhub
   - docker push giurgibogdan/fazan:fazan-api
+  

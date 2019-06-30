@@ -1,9 +1,9 @@
 require('dotenv').config()
 
 const config = {
-    PORT: process.env.PORT || 3001,
+    PORT: process.env.PORT,
     MONGO: {
-        URI: process.env.MONGODB_URI || 'mongo'
+        URI: process.env.MONGODB_URI
     }
 }
 

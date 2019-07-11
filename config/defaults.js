@@ -1,10 +1,6 @@
-require('dotenv').config()
-
 const config = {
-    PORT: process.env.PORT,
-    MONGO: {
-        URI: process.env.MONGODB_URI
-    }
+    queryLimit: 10,
+    queryFrom: 0
 }
 
 module.exports = config;

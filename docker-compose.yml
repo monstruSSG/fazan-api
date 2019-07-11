@@ -4,18 +4,23 @@ services:
     image: 'mongo:latest'
     container_name: mongo
     restart: always
+    volumes:
+      - mongo_volume:/data/db
   server:
     build:
       dockerfile: Dockerfile.dev
       context: .
     volumes:
       - /app/node_modules
-      - .:/app
+      - ./:/app
     links:
       - mongo
+    depends_on:
+      - mongo
     environment: 
-      - PORT=3001
+      - PORT=9000
       - MONGODB_URI=mongodb://mongo:27017/fazan
     ports:
-      - '3000:3001'
-    
+      - '9000:9000'
+volumes:
+  mongo_volume:

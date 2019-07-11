@@ -2,12 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const httpStatus = require('http-status');
 const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
+require('dotenv').config();
 
-const CONFIG = require('./config/defaults');
-const { notFound, errorHandler } = require('./src/utils/middlewares');
 
 const app = express();
 
+const dbConnection = require('./src/database/connection');
+const { notFound, errorHandler } = require('./src/utils/middlewares');
+
+app.use(cors());
+app.use(morgan('dev')); 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,11 +32,19 @@ app.response.__proto__.err = function (data) {
     this.json(data);
 }
 
-app.get('/', (req, res, next) => res.send('Example'));
+/* Start database connection */
+dbConnection().then(() => {
 
-app.use(notFound);
+    //require routes
+    const word = require('./src/api/v1/word/route');
 
-app.use(errorHandler);
+    app.use('/v1/word', word);
 
-app.listen(CONFIG.PORT, () => console.log(`App listening on port ${CONFIG.PORT}`));
+    app.use(notFound);
 
+    app.use(errorHandler);
+
+    app.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
+}).catch(err => {
+    console.log('Could not connect to database!', err)
+});

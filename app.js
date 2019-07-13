@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const httpStatus = require('http-status');
+const http = require('http');
+const socketIo = require('socket.io');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -8,12 +10,15 @@ require('dotenv').config();
 
 
 const app = express();
+const httpServer = http.Server(app);
+const io = socketIo(httpServer);
 
 const dbConnection = require('./src/database/connection');
 const { notFound, errorHandler } = require('./src/utils/middlewares');
+const socketsHandler = require('./src/sockets/event');
 
 app.use(cors());
-app.use(morgan('dev')); 
+app.use(morgan('dev'));
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,8 +46,10 @@ dbConnection().then(() => {
     app.use('/v1/word', word);
 
     app.use(notFound);
-
     app.use(errorHandler);
+
+    //socket io handlers
+    socketsHandler(io);
 
     app.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
 }).catch(err => {

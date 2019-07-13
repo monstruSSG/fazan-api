@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
-const CONFIG = require('../../config/defaults');
-
 mongoose.Promise = global.Promise;
-mongoose.connect(CONFIG.MONGO.URI, {
+
+module.exports = () => mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true
 });
-
-module.exports = { mongoose };

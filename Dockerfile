@@ -4,5 +4,6 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY . .
+RUN npm install -g pm2
 
-CMD ["npm", "run", "start"]
+CMD pm2-runtime start PM2.config.js

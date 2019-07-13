@@ -5,5 +5,8 @@ COPY package.json .
 RUN npm install
 COPY . .
 RUN npm install -g mocha
+RUN npm install -g pm2
 
-CMD ["npm", "run", "start"]
+#for testing
+EXPOSE 9000 
+CMD pm2-dev start PM2.config.js

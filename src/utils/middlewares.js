@@ -6,5 +6,8 @@ module.exports = {
         err.status = statusCodes.NOT_FOUND;
         next(err);
     },
-    errorHandler: (err, req, res, next) => res.status(err.status || statusCodes.INTERNAL_SERVER_ERROR).end()
+    errorHandler: (err, req, res, next) => {
+        console.log(err)
+        res.status(err.status || statusCodes.INTERNAL_SERVER_ERROR).end()
+    }
 };

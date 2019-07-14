@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const readLine = require('readline');
 const wordLogic = require('../../api/v1/word/logic');
-const dbConnection = require('../../database/connection')
+const dbConnection = require('../../database/connection');
 
 dbConnection().then(() => {
     console.log('Connected to db');

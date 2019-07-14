@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const httpStatus = require('http-status');
@@ -6,8 +7,10 @@ const socketIo = require('socket.io');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
-require('dotenv').config();
 
+require('dotenv').config({
+    path: path.resolve(__dirname, `./config/.env`)
+});
 
 const app = express();
 const httpServer = http.Server(app);
@@ -39,7 +42,6 @@ app.response.__proto__.err = function (data) {
 
 /* Start database connection */
 dbConnection().then(() => {
-
     //require routes
     const word = require('./src/api/v1/word/route');
 
@@ -51,7 +53,12 @@ dbConnection().then(() => {
     //socket io handlers
     socketsHandler(io);
 
-    app.listen(process.env.PORT, () => console.log(`App listening on port ${process.env.PORT}`));
+    app.listen(process.env.PORT, () => {
+        console.log(`App listening on port ${process.env.PORT}`)
+        app.emit('appStarted');
+    });
 }).catch(err => {
-    console.log('Could not connect to database!', err)
-});
+    console.log('Could not connect to database!', err);
+})
+
+module.exports = app;

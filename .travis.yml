@@ -2,13 +2,20 @@ sudo: required
 services:
   - docker
 
-before_install:
-  #Build all images wich you want to use in script section
-  - docker build -t fazan/fazan-api-test -f ./Dockerfile.dev .
+#Configuring docker-compose version
+env:
+  - DOCKER_COMPOSE_VERSION=1.4.2
+
+#Here we install docker-compose cli
+before_install: 
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 
 script: 
   #Here you can define what scripts you want like running tests
-  - docker run fazan/fazan-api-test npm test
+  - docker-compose -f ./docker-compose.test.yml up --exit-code-from sut
 
 after_success:
   #Here we will build the prod docker images and push them to dockerhub

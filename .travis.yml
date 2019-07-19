@@ -4,7 +4,7 @@ services:
 
 #Configuring docker-compose version
 env:
-  - DOCKER_COMPOSE_VERSION=1.4.2
+  - DOCKER_COMPOSE_VERSION=3
 
 #Here we install docker-compose cli
 before_install: 
@@ -15,7 +15,7 @@ before_install:
 
 script: 
   #Here you can define what scripts you want like running tests
-  - docker-compose -f docker-compose.test.yml up
+  - docker-compose -f docker-compose.test.yml up --exit-code-from sut
 
 after_success:
   #Here we will build the prod docker images and push them to dockerhub

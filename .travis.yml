@@ -13,12 +13,9 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-before_script:
-  - docker-compose -f docker-compose.test.yml build
-
 script: 
   #Here you can define what scripts you want like running tests
-  - docker-compose -f docker-compose.test.yml start --exit-code-from sut
+  - docker-compose -f docker-compose.test.yml up
 
 after_success:
   #Here we will build the prod docker images and push them to dockerhub

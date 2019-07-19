@@ -1,23 +1,21 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const httpStatus = require('http-status');
-const config = require('../../../config/defaults');
 const testingConfig = require('../../config')
 
 
 chai.use(chaiHttp);
 
-const { expect, assert } = chai;
+const { expect } = chai;
 const request = chai.request(`${testingConfig.host}:${testingConfig.port}`);
 
 var loginToken = null;
 
+describe('Test auth', function () {
 
-describe('Test word endpoint', function () {
-
-    it('Check if endpoint works without authorisation', function (done) {
+    it('Check if users is not logged', function (done) {
         request
-            .get('/v1/word')
+            .get('/v1/isLogged')
             .end((_, res) => {
                 expect(res).to.have.status(httpStatus.UNAUTHORIZED);
                 expect(res).to.be.json;
@@ -25,7 +23,7 @@ describe('Test word endpoint', function () {
             })
     });
 
-    it('Login with testing credentails', function (done) {
+    it('Try to login with testing credentails', function (done) {
         request
             .post('/v1/auth/login')
             .send({ user: testingConfig.testingUser })
@@ -38,50 +36,35 @@ describe('Test word endpoint', function () {
             })
     });
 
-    it('GET default from/limit parameters', function (done) {
+    it('Check if user is logged', function (done) {
+        request
+            .get('/v1/isLogged')
+            .set('authorisation', loginToken)
+            .end((_, res) => {
+                expect(res).to.have.status(httpStatus.OK);
+                expect(res).to.be.json;
+                done();
+            })
+    });
+
+    it('Check if /word endpoint is reachable', function (done) {
         request
             .get('/v1/word')
             .set('authorisation', loginToken)
             .end((_, res) => {
                 expect(res).to.have.status(httpStatus.OK);
                 expect(res).to.be.json;
-                assert(res.body.length, config.queryLimit);
                 done();
             })
     });
 
-    it('GET specific from/limit parameters', function (done) {
-        let checkedLimit = 5
+    it('Alter Token and check if it still works', function (done) {
+        loginToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
         request
-            .get(`/v1/word?${checkedLimit}`)
+            .get('/v1/word')
             .set('authorisation', loginToken)
             .end((_, res) => {
-                expect(res).to.have.status(httpStatus.OK);
-                expect(res).to.be.json;
-                assert(res.body.length, checkedLimit);
-                done();
-            })
-    });
-
-    it('Check if word exists [Must pass]', function (done) {
-        const goodWord = 'abagerie'
-        request
-            .get(`/v1/word/check/${goodWord}`)
-            .set('authorisation', loginToken)
-            .end((_, res) => {
-                expect(res).to.have.status(httpStatus.OK);
-                expect(res).to.be.json;
-                done();
-            })
-    });
-
-    it('Check if word does not exist [Must fail]', function (done) {
-        const badWord = 'nonExistingWord'
-        request
-            .get(`/v1/word/check/${badWord}`)
-            .set('authorisation', loginToken)
-            .end((_, res) => {
-                expect(res).to.have.status(httpStatus.NOT_FOUND);
+                expect(res).to.have.status(httpStatus.UNAUTHORIZED);
                 expect(res).to.be.json;
                 done();
             })

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const crypto = require('crypto');
-const statusCodes = require('http-status');
+const httpStatus = require('http-status');
 const database = require('./database');
 const {
     cantCreateToken
@@ -16,7 +16,7 @@ let logic = {
             return Promise.resolve(token);
         } catch (error) {
             return Promise.reject({
-                status: statusCodes.BAD_REQUEST,
+                status: httpStatus.BAD_REQUEST,
                 message: cantCreateToken,
                 error
             });
@@ -27,7 +27,7 @@ let logic = {
         return database.findOne({ username: user.username, password: hash })
             .then(user => logic.createToken(user._id))
             .then(token => Promise.resolve({
-                status: statusCodes.OK,
+                status: httpStatus.OK,
                 token
             }));
     },
@@ -36,7 +36,7 @@ let logic = {
         return database.create({ ...user, password: hash })
             .then(createdUser => logic.createToken(createdUser._id))
             .then(token => Promise.resolve({
-                status: statusCodes.OK,
+                status: httpStatus.OK,
                 token
             }))
     },

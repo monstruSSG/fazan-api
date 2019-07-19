@@ -15,7 +15,7 @@ describe('Test Api', function () {
             request
                 .get('/unknown')
                 .end((_, res) => {
-                    expect(res).to.have.status(httpStatus.NOT_FOUND);
+                    expect(res).to.have.status(httpStatus.UNAUTHORIZED);
                     expect(res).to.be.json;
                     done()
                 })

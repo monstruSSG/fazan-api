@@ -42,14 +42,17 @@ app.response.__proto__.err = function (data) {
 
 /* Start database connection */
 dbConnection().then(() => {
-    const auth = require('./src/api/v1/auth/route');
-    app.use('/v1/auth', auth);
-
-    app.use(isLogged);
-    //check if logged before including other routes
+    /* Only include routes if connection established */
 
     //require routes
     const word = require('./src/api/v1/word/route');
+    const auth = require('./src/api/v1/auth/route');
+
+
+    app.use('/v1/auth', auth);
+
+    app.use(isLogged);
+    app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
     app.use('/v1/word', word);
 

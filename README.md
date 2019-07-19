@@ -14,3 +14,5 @@ npm run first-setup
 ```
 5) Check if database was populated with: ```GET http://localhost:9000/v1/word```
 6) Check if a word exists: ```GET http://localhost:9000/v1/word/check/:WORD```
+
+This api is a private one and should be used as such. It can be used only locally ! 

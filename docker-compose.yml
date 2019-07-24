@@ -9,7 +9,9 @@ services:
     networks:
       - privateFazanNetwork
   nodejs:
-    build: ./nodejs
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./nodejs
     container_name: nodejs
     restart: unless-stopped
     volumes:
@@ -25,7 +27,9 @@ services:
     networks:
       - privateFazanNetwork
   nginx: 
-    build: ./nginx
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./nginx
     container_name: nginx
     restart: unless-stopped
     depends_on:

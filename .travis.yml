@@ -4,13 +4,15 @@ services:
   
 script: 
   #Here you can define what scripts you want like running tests
-  - docker-compose -f docker-compose.test.yml up --exit-code-from sut
+  - docker-compose -f ./nodejs/docker-compose.test.yml up --exit-code-from sut
 
 after_success:
   #Here we will build the prod docker images and push them to dockerhub
-  - docker build -t giurgibogdan/fazan:fazan-api .
+  - docker build -t giurgibogdan/fazan:fazan-api ./nodejs
+  - docker build -t giurgibogdan/fazan:nginx ./nginx
   #Login to dockerhub
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   #Take the built images and push them to dockerhub
   - docker push giurgibogdan/fazan:fazan-api
+  - docker push giurgibogdan/fazan:nginx
 

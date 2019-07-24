@@ -4,7 +4,7 @@ services:
   
 script: 
   #Here you can define what scripts you want like running tests
-  - docker-compose -f ./nodejs/docker-compose.test.yml up --exit-code-from sut
+  - docker-compose -f nodejs/docker-compose.test.yml up --exit-code-from sut
 
 after_success:
   #Here we will build the prod docker images and push them to dockerhub

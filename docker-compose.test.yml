@@ -2,7 +2,7 @@ version: '3'
 services:
   sut: 
     build:
-      dockerfile: Dockerfile.test
+      dockerfile: ./nodejs/Dockerfile.test
       context: .
     links:
       - mongo

@@ -6,19 +6,43 @@ services:
     restart: always
     volumes:
       - mongo_volume:/data/db
-  server:
-    build:
-      dockerfile: Dockerfile.dev
-      context: .
+    networks:
+      - privateFazanNetwork
+  nodejs:
+    build: ./nodejs
+    container_name: nodejs
+    restart: unless-stopped
     volumes:
       - /app/node_modules
-      - ./:/app
-    links:
+      - ./nodejs:/app
+    depends_on: 
       - mongo
     environment: 
       - PORT=9000
       - MONGODB_URI=mongodb://mongo:27017/fazan
     ports:
-      - '9000:9000'
+      - 9000:9000
+    networks:
+      - privateFazanNetwork
+  nginx: 
+    build: ./nginx
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - nodejs
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - privateFazanNetwork
+      - publicFazanNetwork
+
 volumes:
   mongo_volume:
+
+networks:
+  privateFazanNetwork:
+    internal: true
+  publicFazanNetwork:

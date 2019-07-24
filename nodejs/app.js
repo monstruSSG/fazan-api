@@ -17,7 +17,7 @@ const httpServer = http.Server(app);
 const io = socketIo(httpServer);
 
 const dbConnection = require('./src/database/connection');
-const { notFound, errorHandler } = require('./src/utils/middlewares');
+const { notFound, errorHandler, isLogged } = require('./src/utils/middlewares');
 const socketsHandler = require('./src/sockets/event');
 
 app.use(cors());
@@ -42,8 +42,17 @@ app.response.__proto__.err = function (data) {
 
 /* Start database connection */
 dbConnection().then(() => {
+    /* Only include routes if connection established */
+
     //require routes
     const word = require('./src/api/v1/word/route');
+    const auth = require('./src/api/v1/auth/route');
+
+
+    app.use('/v1/auth', auth);
+
+    app.use(isLogged);
+    app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
     app.use('/v1/word', word);
 

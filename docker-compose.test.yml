@@ -1,0 +1,17 @@
+version: '3'
+services:
+  sut: 
+    build:
+      dockerfile: ./nodejs/Dockerfile.test
+      context: .
+    links:
+      - mongo
+    environment: 
+      - HOST=http://localhost
+      - PORT=9001
+      - MONGODB_URI=mongodb://mongo:27017/fazan_testing
+  mongo:
+    image: 'mongo:latest'
+    container_name: mongo
+    restart: always
+

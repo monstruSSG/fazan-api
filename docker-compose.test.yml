@@ -3,7 +3,7 @@ services:
   sut: 
     build:
       dockerfile: ./nodejs/Dockerfile.test
-      context: .
+      context: ./nodejs
     links:
       - mongo
     environment: 

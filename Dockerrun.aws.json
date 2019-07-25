@@ -2,24 +2,21 @@
     "AWSEBDockerrunVersion": 2,
     "containerDefinitions": [
         {
-            "name": "server",
+            "name": "fazan-api",
             "image": "giurgibogdan/fazan:fazan-api",
-            "hostname": "api",
-            "essential": true,
-            "memory": 128,
-            "portMappings": [
-                {
-                    "hostPort": 80,
-                    "containerPort": 9000
-                }
-            ]
+            "hostname": "fazan-api",
+            "essential": false
         },
         {
             "name": "nginx",
             "image": "giurgibogdan/fazan:nginx",
-            "essential": false,
-            "memory": 128,
-            
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
             "links": [
                 "server"
             ]

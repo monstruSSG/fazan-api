@@ -24,7 +24,7 @@ deploy:
   bucket_name: elasticbeanstalk-eu-central-1-463941262718
   bucket_path: api-fazan
   on:
-    branch: addCD
+    branch: master
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: 
     secure: $AWS_SECRET_KEY

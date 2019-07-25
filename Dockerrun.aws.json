@@ -19,12 +19,7 @@
             "image": "giurgibogdan/fazan:nginx",
             "essential": false,
             "memory": 128,
-            "portMappings": [
-                {
-                    "hostPort": 80,
-                    "containerPort": 80
-                }
-            ],
+            
             "links": [
                 "server"
             ]

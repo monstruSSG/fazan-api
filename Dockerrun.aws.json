@@ -5,12 +5,14 @@
             "name": "fazan-api",
             "image": "giurgibogdan/fazan:fazan-api",
             "hostname": "fazan-api",
-            "essential": false
+            "essential": false,
+            "memory": 128
         },
         {
             "name": "nginx",
             "image": "giurgibogdan/fazan:nginx",
             "essential": true,
+            "memory": 128,
             "portMappings": [
                 {
                     "hostPort": 80,

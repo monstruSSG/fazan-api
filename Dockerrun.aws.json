@@ -2,7 +2,7 @@
     "AWSEBDockerrunVersion": 2,
     "containerDefinitions": [
         {
-            "name": "fazan-api",
+            "name": "nodejs",
             "image": "giurgibogdan/fazan:fazan-api",
             "hostname": "fazan-api",
             "essential": false,

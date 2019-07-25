@@ -14,3 +14,5 @@ after_success:
   #Take the built images and push them to dockerhub
   - docker push giurgibogdan/fazan:fazan-api
 
+
+

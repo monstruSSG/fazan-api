@@ -14,5 +14,16 @@ after_success:
   #Take the built images and push them to dockerhub
   - docker push giurgibogdan/fazan:fazan-api
 
-
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-central-1"
+  app: "fazan-api",
+  env: "FazanApi-env"
+  bucket_name: "elasticbeanstalk-eu-central-1-463941262718"
+  bucket_path: "api-fazan"
+  on:
+    branch: addExtraConfToCIForNginx
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: 
+    secure: $AWS_SECRET_KEY
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha ./test/api/ --recursive --file ./test/prepare.js --exit",
+    "test": "npx mocha ./test/ --recursive --file ./test/prepare.js --exit",
     "dev": "nodemon app.js",
     "start": "node app.js",
     "first-setup": "MONGODB_URI=mongodb://mongo:27017/fazan node src/services/projectSetup/init.js"

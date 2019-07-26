@@ -48,7 +48,6 @@ dbConnection().then(() => {
     const word = require('./src/api/v1/word/route');
     const auth = require('./src/api/v1/auth/route');
 
-
     app.use('/v1/auth', auth);
 
     app.use(isLogged);
@@ -62,7 +61,7 @@ dbConnection().then(() => {
     //socket io handlers
     socketsHandler(io);
 
-    app.listen(process.env.PORT, () => {
+    httpServer.listen(process.env.PORT, () => {
         console.log(`App listening on port ${process.env.PORT}`)
         app.emit('appStarted');
     });

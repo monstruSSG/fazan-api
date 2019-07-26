@@ -1,9 +1,10 @@
-module.exports = io => {
-    io.on('invitationSent', socket => {
-
+module.exports = socket => {
+    socket.on('invitationSent', data => {
+        console.log(`Received: ${data}`)
+        socket.emit('invitationAccepted', { message: 'pingPong' })
     })
 
-    io.on('inviatationAccepted', socket => {
+    socket.on('inviatationAccepted', data => {
 
     })
 }

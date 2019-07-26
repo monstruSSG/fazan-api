@@ -8,8 +8,8 @@ module.exports = io => {
 
         invitationHandler(socket);
 
-        socket.on('disonnect', socket => {
-
+        socket.on('disconnect', socket => {
+            console.log('user disconnected');
         })
     })
 }

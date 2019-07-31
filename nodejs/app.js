@@ -50,7 +50,7 @@ dbConnection().then(() => {
 
     app.use('/v1/auth', auth);
 
-    app.use(isLogged);
+    //app.use(isLogged);
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
     app.use('/v1/word', word);

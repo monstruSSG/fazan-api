@@ -6,8 +6,8 @@ module.exports = {
         .skip(limit.from)
         .limit(limit.limit)
         .lean().exec(),
-    findOne: query => wordModel.findOne(query)
-        .lean().exec(),
+    aggregate: query => wordModel.aggregate(query).exec(),
+    findOne: query => wordModel.findOne(query).lean().exec(),
     create: word => wordModel.create({ word }),
     createMany: words => wordModel.insertMany(words)
 }

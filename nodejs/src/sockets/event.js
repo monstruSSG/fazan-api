@@ -1,4 +1,6 @@
 const invitationHandler = require('./invitation/invitation');
+const pingHandler = require('./ping/ping');
+const usersHandler = require('./user/user');
 
 
 module.exports = io => {
@@ -6,10 +8,12 @@ module.exports = io => {
     io.on('connection', socket => {
         console.log('user connected');
 
-        invitationHandler(socket);
+        pingHandler(socket);
+        invitationHandler(io, socket);
+        usersHandler(io, socket);
 
-        socket.on('disonnect', socket => {
-
+        socket.on('disconnect', socket => {
+            console.log('user disconnected');
         })
     })
 }

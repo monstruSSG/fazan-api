@@ -1,10 +1,20 @@
-module.exports = socket => {
+module.exports = (io, socket) => {
     socket.on('invitationSent', data => {
-        console.log(`Received: ${data}`)
-        socket.emit('invitationAccepted', { message: 'pingPong' })
+        console.log(`Received invitation request for: ${data.socketId}`)
+
+        io.to(data.socketId).emit('invitationReceived', { socketId: socket.id })
     })
 
-    socket.on('inviatationAccepted', data => {
+    socket.on('invitationAccepted', data => {
+        console.log(`Invitation accepted by: ${socket.id}`)
 
+        //send 'startGame' to both players
+        io.to(data.socketId).emit('startGame', { socketId: socket.id })
+        io.to(socket.id).emit('startGame', { socketId: data.socketId })
+    })
+
+    socket.on('invitationDeclined', data => {
+        console.log(`Invitation declined by: ${socket.id}`)
+        io.to(data.socketId).emit('invitationDeclined', { socketId: socket.id })
     })
 }

@@ -9,7 +9,7 @@ const {
 
 
 module.exports = {
-    notFound: (req, res, next) => {
+    notFound: (_, _, next) => {
         let err = new Error('Not found');
         err.status = httpStatus.NOT_FOUND;
         next(err);

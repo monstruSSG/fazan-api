@@ -5,7 +5,7 @@ const userLogic = require('../../api/v1/user');
 const { won, lost, available } = require('../../utils/constants/app');
 
 
-module.exports = (io, socket, session) => {
+module.exports = (io, socket) => {
     socket.on('sendWord', data => {
 
         //check if oponent just lost 
@@ -34,7 +34,7 @@ module.exports = (io, socket, session) => {
                 }),
                 //you won
                 gameHistoryLogic.create({
-                    user: session.userId,
+                    user: socket.userId,
                     outcome: won,
                     dateTime: moment().toISOString()
                 }),
@@ -50,7 +50,7 @@ module.exports = (io, socket, session) => {
                 ),
                 //increase loses and make user available again
                 userLogic.update(
-                    session.userId,
+                    socket.userId,
                     {
                         "$inc": {
                             loses: 1

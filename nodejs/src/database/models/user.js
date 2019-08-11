@@ -7,7 +7,10 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
     username: String,
-    password: String,
+    password: {
+        type: String,
+        select: false
+    },
     isActive: {
         type: Boolean,
         default: true
@@ -19,7 +22,7 @@ const userSchema = new Schema({
     status: {
         type: String,
         enum: [available, busy],
-        default: inactive
+        default: available
     },
     socketId: {
         type: String

@@ -6,7 +6,7 @@ const { won, lost } = require('../../utils/constants/app');
 
 const { Schema } = mongoose;
 
-const gamesHistory = new Schema({
+const gamesHistoryModel = new Schema({
     user: { type: Schema.Types.ObjectId, ref: users },
     outcome: {
         type: String,
@@ -19,4 +19,4 @@ const gamesHistory = new Schema({
     }
 });
 
-exports.gameHistoryModel = mongoose.model(gamesHistory, gamesHistory);
+exports.gameHistoryModel = mongoose.model(gamesHistory, gamesHistoryModel);

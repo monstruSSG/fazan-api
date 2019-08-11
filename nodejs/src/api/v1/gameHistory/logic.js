@@ -4,7 +4,7 @@ const { maximumHistoryLenght } = require('../../../utils/constants/app');
 
 
 module.exports = {
-    find: userId => database.find({ _id: userId }, { limit: maximumHistoryLenght }),
+    find: query => database.find(query, { limit: maximumHistoryLenght }),
     create: (userId, historyObj) => database.find({ _id: userId }).then(history => {
         
         //check maximum number of games history

@@ -1,22 +1,11 @@
 const express = require('express');
-const wordLogic = require('./logic');
+const userFacade = require('./facade');
 const router = express.Router();
 
-const config = require('../../../../config/defaults')
 
-
-router.route('/check/:WORD')
+router.route('/profile')
     .get((req, res) =>
-        wordLogic.check(req.params.WORD)
-            .then(response => res.done(response))
-            .catch(err => res.err(err)))
-
-router.route('/')
-    .get((req, res) =>
-        wordLogic.find({
-            from: Number(req.query.from) || config.queryFrom,
-            limit: Number(req.query.limit) || config.queryLimit
-        })
+    userFacade.getProfile(req.session.userId)
             .then(response => res.done(response))
             .catch(err => res.err(err)))
 

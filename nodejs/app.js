@@ -17,7 +17,7 @@ const httpServer = http.Server(app);
 const io = socketIo(httpServer);
 
 const dbConnection = require('./src/database/connection');
-const { notFound, errorHandler, isLogged } = require('./src/utils/middlewares');
+const { notFound, errorHandler, isLoggedHttp, isLoggedSocket } = require('./src/utils/middlewares');
 const socketsHandler = require('./src/sockets/event');
 
 app.use(cors());
@@ -50,7 +50,10 @@ dbConnection().then(() => {
 
     app.use('/v1/auth', auth);
 
-    app.use(isLogged);
+    //http rest and websockets middlewares for login
+    app.use(isLoggedHttp);
+    io.use(isLoggedSocket);
+
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
     app.use('/v1/word', word);

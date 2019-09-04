@@ -6,6 +6,8 @@ const { won, lost, available } = require('../../utils/constants/app');
 
 
 module.exports = (io, socket) => {
+    socket.on('inGame', data => console.log(data, 'IN_GAME'))
+
     socket.on('sendWord', data => {
 
         //check if oponent just lost 

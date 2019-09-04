@@ -1,4 +1,5 @@
 module.exports = {
     words: 'words',
-    users: 'users'
+    users: 'users',
+    gamesHistory: 'gamesHistory'
 }

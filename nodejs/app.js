@@ -52,7 +52,10 @@ dbConnection().then(() => {
 
     //http rest and websockets middlewares for login
     app.use(isLoggedHttp);
-    io.use(isLoggedSocket);
+
+    //socket io handlers
+    socketsHandler(io);
+    //io.use(isLoggedSocket);
 
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
@@ -60,9 +63,6 @@ dbConnection().then(() => {
 
     app.use(notFound);
     app.use(errorHandler);
-
-    //socket io handlers
-    socketsHandler(io);
 
     httpServer.listen(process.env.PORT, () => {
         console.log(`App listening on port ${process.env.PORT}`)

@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.route('/login')
     .post((req, res) =>
-        authLogic.login(req.body.user)
+        authLogic.login(req.body)
             .then(response => res.done(response))
             .catch(err => res.err(err)))
 
@@ -15,4 +15,4 @@ router.route('/register')
             .then(response => res.done(response))
             .catch(err => res.err(err)))
 
-module.exports = router
+module.exports = router 

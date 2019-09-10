@@ -5,8 +5,9 @@ const httpStatus = require('http-status');
 const database = require('./database');
 const {
     cantCreateToken
-} = require('../../../utils/constants/errorMessages')
-
+} = require('../../../utils/constants/errorMessages');
+const { facebookBaseUrl } = require('../../../../config/defaults');
+const axios = require('axios');
 
 let logic = {
     createToken: userId => {
@@ -22,14 +23,11 @@ let logic = {
             });
         }
     },
-    login: user => {
-        const hash = crypto.createHash(process.env.CRYPTO_ALG).update(user.password).digest(process.env.CRYPTO_OUTPUT);
-        return database.findOne({ username: user.username, password: hash })
-            .then(user => logic.createToken(user._id))
-            .then(token => Promise.resolve({
-                status: httpStatus.OK,
-                token
-            }));
+    login: data => {
+        console.log(data, 'DATA')
+        return axios.get(`https://graph.facebook.com/app?access_token=${data.fbToken}`)
+            .then(res => console.log(res.data, 'RESPONS'))
+            .catch(err => console.log(err, 'eRoare'))
     },
     register: user => {
         const hash = crypto.createHash(process.env.CRYPTO_ALG).update(user.password).digest(process.env.CRYPTO_OUTPUT);

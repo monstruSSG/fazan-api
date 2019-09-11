@@ -51,8 +51,8 @@ dbConnection().then(() => {
     app.use('/v1/auth', auth);
 
     //http rest and websockets middlewares for login
-    // app.use(isLoggedHttp);
-    // io.use(isLoggedSocket);
+    app.use(isLoggedHttp);
+    io.use(isLoggedSocket);
 
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 

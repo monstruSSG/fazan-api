@@ -7,6 +7,10 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
     username: String,
+    shortName: String,
+    pictureUrl: String,
+    facebookId: String,
+    googleId: String,
     password: {
         type: String,
         select: false
@@ -17,7 +21,7 @@ const userSchema = new Schema({
     },
     isDeleted: {
         type: Boolean,
-        default: true
+        default: false
     },
     status: {
         type: String,

@@ -11,26 +11,28 @@ const {
 checkAutorisation = async authorisation => {
     //header template: Bearer {token}
     let splittedHeader = authorisation.split(' ');
+    
     if (splittedHeader.length) {
         let token = splittedHeader[1];
         try {
             let decoded = await jwt.verify(token, process.env.JWT_SECRET);
+      
             if (await authLogic.findUserById(decoded.userId)) {
-                return {
+                return Promise.resolve({
                     status: httpStatus.OK,
                     userId: decoded.userId
-                }
+                })
             }
-            return {
+            return Promise.resolve({
                 status: httpStatus.UNAUTHORIZED,
                 message: badCredentials
-            };
+            });
         } catch (error) {
-            return {
+            return Promise.resolve({
                 status: httpStatus.UNAUTHORIZED,
                 message: invalidToken,
                 error
-            }
+            })
         }
     }
 }
@@ -53,12 +55,13 @@ module.exports = {
                 message: invalidAuthHeader
             });
         }
-        let authorisationResponse = checkAutorisation(req.headers.authorisation)
-        if (authorisationResponse.status === httpStatus.OK) {
-            req.userId = authorisationResponse.userId
-            return next()
-        }
-        return res.err(authorisationResponse)
+        return checkAutorisation(req.headers.authorisation)
+            .then(authorisationResponse => {
+                if (authorisationResponse.status === httpStatus.OK) {
+                    req.userId = authorisationResponse.userId
+                    return next()
+                } else return res.err(authorisationResponse)
+            })
     },
     isLoggedSocket: (socket, next) => {
         if (!socket.handshake.query || !socket.handshake.query.authorisation) {

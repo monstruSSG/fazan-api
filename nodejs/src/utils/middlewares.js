@@ -11,12 +11,12 @@ const {
 checkAutorisation = async authorisation => {
     //header template: Bearer {token}
     let splittedHeader = authorisation.split(' ');
-    
+
     if (splittedHeader.length) {
         let token = splittedHeader[1];
         try {
             let decoded = await jwt.verify(token, process.env.JWT_SECRET);
-      
+
             if (await authLogic.findUserById(decoded.userId)) {
                 return Promise.resolve({
                     status: httpStatus.OK,
@@ -70,11 +70,13 @@ module.exports = {
                 message: invalidAuthHeader
             }));
         }
-        let authorisationResponse = checkAutorisation(socket.handshake.query.authorisation)
-        if (authorisationResponse.status === httpStatus.OK) {
-            socket.userId = authorisationResponse.userId
-            return next()
-        }
-        return next(new Error(authorisationResponse))
+        return checkAutorisation(socket.handshake.query.authorisation)
+            .then(authorisationResponse => {
+                if (authorisationResponse.status === httpStatus.OK) {
+                    socket.userId = authorisationResponse.userId
+                    return next()
+                }
+                return next(new Error(authorisationResponse))
+            })
     }
 };

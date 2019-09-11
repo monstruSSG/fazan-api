@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { users } = require('../constants');
-const { available, busy} = require('../../utils/constants/app');
+const { available, busy } = require('../../utils/constants/app');
 
 
 const { Schema } = mongoose;
@@ -44,5 +44,17 @@ const userSchema = new Schema({
         default: 0
     }
 });
+
+userSchema.methods.toJSON = function () {
+    return {
+        wins: this.wins,
+        loses: this.loses,
+        score: this.score,
+        _id: this._id,
+        userSchema: this.username,
+        shortName: this.shortName,
+        pictureUrl: this.pictureUrl
+    }
+}
 
 exports.userModel = mongoose.model(users, userSchema);

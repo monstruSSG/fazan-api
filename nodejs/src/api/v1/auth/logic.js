@@ -9,19 +9,6 @@ const { cantCreateToken } = require('../../../utils/constants/errorMessages');
 const { facebookBaseUrl, facebookGetDataUrl } = require('../../../../config/defaults');
 
 let logic = {
-    createToken: userId => {
-        try {
-            //added timestamp for randomness
-            let token = jwt.sign({ userId, timestamp: moment().format() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-            return Promise.resolve(token);
-        } catch (error) {
-            return Promise.reject({
-                status: httpStatus.BAD_REQUEST,
-                message: cantCreateToken,
-                error
-            });
-        }
-    },
     login: ({ fbToken }) => axios.get(`${facebookBaseUrl}?access_token=${fbToken}`)
         .then(() => axios.get(`${facebookGetDataUrl}/me?fields=name,short_name,picture&access_token=${fbToken}`))
         .then(async ({ data }) => {
@@ -50,17 +37,7 @@ let logic = {
 
             return Promise.resolve(updateUser)
         })
-        .then(user => Promise.resolve({ status: httpStatus.OK, user })),
-    register: user => {
-        const hash = crypto.createHash(process.env.CRYPTO_ALG).update(user.password).digest(process.env.CRYPTO_OUTPUT);
-        return database.create({ ...user, password: hash })
-            .then(createdUser => logic.createToken(createdUser._id))
-            .then(token => Promise.resolve({
-                status: httpStatus.OK,
-                token
-            }))
-    },
-    findUserById: database.findUserById
+        .then(user => Promise.resolve({ status: httpStatus.OK, user }))
 }
 
 module.exports = logic;

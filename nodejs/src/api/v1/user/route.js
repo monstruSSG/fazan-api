@@ -5,14 +5,12 @@ const jwt = require('jsonwebtoken');
 
 
 router.route('/')
-    .get((req, res) => {
-        return userFacade.getUsers({}, { from: Number(req.query.from), limit: Number(req.query.limit) })
-            .then(response => res.done(response))
-            .catch(err => res.err(err))
-    })
+    .get((req, res) => userFacade.getUsers({}, { from: Number(req.query.from), limit: Number(req.query.limit) })
+        .then(response => res.done(response))
+        .catch(err => res.err(err)))
 
 router.route('/profile')
-    .get((req, res) => userFacade.getProfile(jwt.decode(req.headers.authorization))
+    .get((req, res) => userFacade.getProfile(req.userId)
         .then(response => res.done(response))
         .catch(err => res.err(err)))
 

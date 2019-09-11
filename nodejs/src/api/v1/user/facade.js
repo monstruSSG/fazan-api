@@ -5,7 +5,7 @@ const gameHistoryLogic = require('../gameHistory/logic');
 
 module.exports = {
     getProfile: userId => Promise.all([
-        userLogic.find({ _id: userId }),
+        userLogic.findById( userId ),
         gameHistoryLogic.find({ user: userId })
     ]).then(responses => {
         if (responses[0]) {

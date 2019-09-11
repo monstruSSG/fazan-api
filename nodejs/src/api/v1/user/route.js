@@ -1,8 +1,6 @@
 const express = require('express');
 const userFacade = require('./facade');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-
 
 router.route('/')
     .get((req, res) => userFacade.getUsers({}, { from: Number(req.query.from), limit: Number(req.query.limit) })

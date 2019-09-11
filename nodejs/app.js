@@ -47,6 +47,7 @@ dbConnection().then(() => {
     //require routes
     const word = require('./src/api/v1/word/route');
     const auth = require('./src/api/v1/auth/route');
+    const user = require('./src/api/v1/user/route');
 
     app.use('/v1/auth', auth);
 
@@ -57,6 +58,7 @@ dbConnection().then(() => {
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 
     app.use('/v1/word', word);
+    app.use('/v1/user', user);
 
     app.use(notFound);
     app.use(errorHandler);

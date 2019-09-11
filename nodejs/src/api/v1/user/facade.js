@@ -18,5 +18,6 @@ module.exports = {
                 status: httpStatus.NOT_FOUND
             })
         }
-    })
+    }),
+    getUsers: (query, limit) => userLogic.find(query, limit) 
 }

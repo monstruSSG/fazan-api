@@ -48,5 +48,6 @@ volumes:
 
 networks:
   privateFazanNetwork:
-    internal: true
+    driver: bridge
   publicFazanNetwork:
+    driver: bridge

@@ -17,7 +17,7 @@ const httpServer = http.Server(app);
 const io = socketIo(httpServer);
 
 const dbConnection = require('./src/database/connection');
-const { notFound, errorHandler, isLogged } = require('./src/utils/middlewares');
+const { notFound, errorHandler, isLoggedHttp, isLoggedSocket } = require('./src/utils/middlewares');
 const socketsHandler = require('./src/sockets/event');
 
 app.use(cors());
@@ -47,19 +47,24 @@ dbConnection().then(() => {
     //require routes
     const word = require('./src/api/v1/word/route');
     const auth = require('./src/api/v1/auth/route');
+    const user = require('./src/api/v1/user/route');
 
     app.use('/v1/auth', auth);
 
-    app.use(isLogged);
-    app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
-
-    app.use('/v1/word', word);
-
-    app.use(notFound);
-    app.use(errorHandler);
+    //http rest and websockets middlewares for login
+    app.use(isLoggedHttp);
 
     //socket io handlers
     socketsHandler(io);
+    //io.use(isLoggedSocket);
+
+    app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
+
+    app.use('/v1/word', word);
+    app.use('/v1/user', user);
+
+    app.use(notFound);
+    app.use(errorHandler);
 
     httpServer.listen(process.env.PORT, () => {
         console.log(`App listening on port ${process.env.PORT}`)

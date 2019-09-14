@@ -4,7 +4,7 @@ const database = require('./database');
 
 module.exports = {
     find: limit => database.find({}, limit),
-    checkWordSubstring: word => database.findOne({ word: { $regex: `/^${word.slice(-2)}/` } }) //find word starting with ending two letters of given word
+    checkWordSubstring: word => database.findOne({ word: { $regex: new RegExp(`^${word.slice(-2)}`) } }) //find word starting with ending two letters of given word
         .then(word => {
             //word not found, game over
             if (!word) return Promise.reject({ status: httpStatus.NOT_FOUND })

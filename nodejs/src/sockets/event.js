@@ -6,9 +6,9 @@ const gameHandler = require('./game/game');
 const usersLogic = require('../api/v1/user/logic');
 
 
-module.exports = io => {
+module.exports = () => {
     //general namespace
-    io.on('connection', async socket => {
+    global.io.on('connection', async socket => {
         console.log('user connected');
 
         //update socketId to user
@@ -18,9 +18,9 @@ module.exports = io => {
             })
 
             pingHandler(socket);
-            invitationHandler(io, socket);
-            usersHandler(io, socket);
-            gameHandler(io, socket);
+            invitationHandler(socket);
+            usersHandler(socket);
+            gameHandler(socket);
         } catch (e) {
             //could not find user
             console.log(e)

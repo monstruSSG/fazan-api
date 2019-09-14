@@ -5,20 +5,20 @@ const userLogic = require('../../api/v1/user/logic');
 const { won, lost, available } = require('../../utils/constants/app');
 
 
-module.exports = (io, socket) => {
+module.exports = socket => {
     socket.on('sendWord', data => {
         //check if oponent just lost 
         wordLogic.checkWordSubstring(data.word).then(() => //word exists
-            io.to(data.socketId).emit('gotWord', {
+            global.io.to(data.socketId).emit('gotWord', {
                 word: data.word,
                 socketId: data.socketId
             })
         ).catch(() => {
             //async send sockets
-            io.to(data.socketId).emit('gameOver', {
+            global.io.to(data.socketId).emit('gameOver', {
                 word: data.word
             })
-            io.to(socket.id).emit('youWon', {
+            global.io.to(socket.id).emit('youWon', {
                 word: data.word
             })
             return userLogic.find({ socketId: data.socketId }).then(user => {

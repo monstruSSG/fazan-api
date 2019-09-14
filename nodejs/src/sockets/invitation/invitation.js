@@ -2,19 +2,19 @@ const usersLogic = require('../../api/v1/user/logic');
 const { busy } = require('../../utils/constants/app');
 
 
-module.exports = (io, socket) => {
+module.exports = socket => {
     socket.on('invitationSent', data => {
         console.log(`Received invitation request for: ${data.socketId}`);
 
-        io.to(data.socketId).emit('invitationReceived', { socketId: socket.id });
+        global.io.to(data.socketId).emit('invitationReceived', { socketId: socket.id });
     })
 
     socket.on('invitationAccepted', data => {
         console.log(`Invitation accepted by: ${socket.id}`);
 
         //send 'startGame' to both players
-        io.to(data.socketId).emit('startGame', { socketId: socket.id });
-        io.to(socket.id).emit('startGame', { socketId: data.socketId });
+        global.io.to(data.socketId).emit('startGame', { socketId: socket.id });
+        global.io.to(socket.id).emit('startGame', { socketId: data.socketId });
 
         //set users as being busy
         Promise.all([

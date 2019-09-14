@@ -8,6 +8,11 @@ router.route('/')
         .then(response => res.done(response))
         .catch(err => res.err(err)))
 
+router.route('/search')
+    .get((req, res) => userFacade.search(req.query.term)
+        .then(response => res.done(response))
+        .catch(err => res.err(err)))
+
 router.route('/profile')
     .get((req, res) => userFacade.getProfile(req.userId)
         .then(response => res.done(response))

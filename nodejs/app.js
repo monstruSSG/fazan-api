@@ -42,6 +42,7 @@ app.response.__proto__.err = function (data) {
 
 /* Start database connection */
 dbConnection().then(() => {
+    global.io = io //set socket IO as global
     /* Only include routes if connection established */
 
     //require routes
@@ -55,8 +56,8 @@ dbConnection().then(() => {
     app.use(isLoggedHttp);
 
     //socket io handlers
-    socketsHandler(io);
-    //io.use(isLoggedSocket);
+    socketsHandler();
+    io.use(isLoggedSocket);
 
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 

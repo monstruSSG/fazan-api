@@ -21,9 +21,7 @@ module.exports = (io, socket) => {
             io.to(socket.id).emit('youWon', {
                 word: data.word
             })
-            console.log("DATA", data)
             return userLogic.find({ socketId: data.socketId }).then(user => {
-                console.log(user)
                 if (!user) return Promise.reject({ message: 'User does not exists ' })
                 //log outcome
                 return Promise.all([
@@ -34,11 +32,11 @@ module.exports = (io, socket) => {
                         dateTime: moment().toISOString()
                     }),
                     //you won
-                    /*gameHistoryLogic.create({
+                    gameHistoryLogic.create({
                         user: socket.userId,
                         outcome: won,
                         dateTime: moment().toISOString()
-                    }),*/
+                    }),
                     //increase wins and make user available again
                     userLogic.update(
                         socket.id,
@@ -50,7 +48,7 @@ module.exports = (io, socket) => {
                         }
                     ),
                     //increase loses and make user available again
-                    /*userLogic.update(
+                    userLogic.update(
                         socket.userId,
                         {
                             "$inc": {
@@ -58,7 +56,7 @@ module.exports = (io, socket) => {
                             },
                             status: available
                         }
-                    )*/
+                    )
                 ])
             })
         })

@@ -23,11 +23,11 @@ module.exports = (io, socket) => {
                     status: busy
                 }
             ),
-            // usersLogic.update(session.userId,
-            //     {
-            //         status: busy
-            //     }
-            // )
+            usersLogic.update(session.userId,
+                 {
+                     status: busy
+                 }
+            )
         ])
     })
 

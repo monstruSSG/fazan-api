@@ -6,7 +6,7 @@ module.exports = {
         .skip(limit.from)
         .limit(limit.limit)
         .lean().exec(),
-    update: (userId, query) => userModel.update(userId, query)
+    update: (userId, query) => userModel.update({ _id: userId }, query)
         .lean().exec(),
     findById: userId => userModel.findById(userId)
 }

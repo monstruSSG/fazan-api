@@ -34,6 +34,7 @@ app.response.__proto__.done = function (data) {
 }
 
 app.response.__proto__.err = function (data) {
+    console.log(data)
     if (!data.status) data.status = httpStatus.BAD_REQUEST;
 
     this.status(data.status);
@@ -56,8 +57,9 @@ dbConnection().then(() => {
     app.use(isLoggedHttp);
 
     //socket io handlers
-    socketsHandler();
     io.use(isLoggedSocket);
+    socketsHandler();
+
 
     app.use('/v1/isLogged', (_, res) => res.done({ status: httpStatus.OK }))
 

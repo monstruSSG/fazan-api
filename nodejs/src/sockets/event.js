@@ -9,14 +9,12 @@ const usersLogic = require('../api/v1/user/logic');
 module.exports = () => {
     //general namespace
     global.io.on('connection', async socket => {
-        console.log('user connected');
-
+        console.log('user connected')
         //update socketId to user
         try {
             await usersLogic.update(socket.userId, {
-                socketId: socket.id
+                 socketId: socket.id
             })
-
             pingHandler(socket);
             invitationHandler(socket);
             usersHandler(socket);

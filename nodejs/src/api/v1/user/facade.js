@@ -19,7 +19,7 @@ module.exports = {
             })
         }
     }),
-    search: term => {
+    search: async  term => {
         let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id);
         let usersList = []
         try {

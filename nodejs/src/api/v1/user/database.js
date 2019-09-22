@@ -6,6 +6,8 @@ module.exports = {
         .skip(limit.from)
         .limit(limit.limit)
         .lean().exec(),
+    findOne: (query = {}) => userModel.findOne(query)
+        .lean().exec(),
     update: (userId, query) => userModel.update({ _id: userId }, query)
         .lean().exec(),
     findById: userId => userModel.findById(userId)

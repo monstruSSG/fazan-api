@@ -4,7 +4,7 @@ const { busy } = require('../../utils/constants/app');
 
 module.exports = socket => {
     socket.on('invitationSent', data => {
-        console.log(`Received invitation request for: ${data.socketId}`);
+        console.log(`Received invitation request for: ${data.socketId}`, data);
 
         global.io.to(data.socketId).emit('invitationReceived', { socketId: socket.id });
     })
@@ -17,18 +17,24 @@ module.exports = socket => {
         global.io.to(socket.id).emit('startGame', { socketId: data.socketId });
 
         //set users as being busy
-        Promise.all([
-            usersLogic.update(socket.userId,
-                {
-                    status: busy
-                }
-            ),
-            usersLogic.update(session.userId,
-                 {
-                     status: busy
-                 }
-            )
-        ])
+        return usersLogic.findOne({ socketId: socket.id }).then(user => {
+            if (!user) return Promise.reject({ message: 'user not found' })
+            return Promise.all([
+                usersLogic.update(socket.userId,
+                    {
+                        status: busy
+                    }
+                ),
+                usersLogic.update(user._id,
+                    {
+                        status: busy
+                    }
+                )
+            ]).catch(err => {
+                console.log("HERE1", err)
+                return Promise.reject(err)
+            })
+        })
     })
 
     socket.on('invitationDeclined', data => {

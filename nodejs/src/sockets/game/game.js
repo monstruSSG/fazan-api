@@ -8,12 +8,13 @@ const { won, lost, available } = require('../../utils/constants/app');
 module.exports = socket => {
     socket.on('sendWord', data => {
         //check if oponent just lost 
-        wordLogic.checkWordSubstring(data.word).then(() => //word exists
+
+        wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() =>{  //word exists
             global.io.to(data.socketId).emit('gotWord', {
                 word: data.word,
                 socketId: data.socketId
             })
-        ).catch(() => {
+        }).catch(() => {
             //async send sockets
             global.io.to(data.socketId).emit('gameOver', {
                 word: data.word
@@ -21,7 +22,7 @@ module.exports = socket => {
             global.io.to(socket.id).emit('youWon', {
                 word: data.word
             })
-            return userLogic.find({ socketId: data.socketId }).then(user => {
+            return userLogic.findOne({ socketId: data.socketId }).then(user => {
                 if (!user) return Promise.reject({ message: 'User does not exists ' })
                 //log outcome
                 return Promise.all([
@@ -39,7 +40,7 @@ module.exports = socket => {
                     }),
                     //increase wins and make user available again
                     userLogic.update(
-                        socket.id,
+                        user._id,
                         {
                             "$inc": {
                                 wins: 1
@@ -57,7 +58,9 @@ module.exports = socket => {
                             status: available
                         }
                     )
-                ])
+                ]).catch(err => {
+                    console.log("ERROR", err)
+                })
             })
         })
     })

@@ -9,5 +9,7 @@ module.exports = {
     findOne: query => wordModel.findOne(query)
         .lean().exec(),
     create: word => wordModel.create({ word }),
-    createMany: words => wordModel.insertMany(words)
+    count: query => wordModel.count(query).lean().exec(),
+    createMany: words => wordModel.insertMany(words),
+    aggregate: query => wordModel.aggregate(query).exec()
 }

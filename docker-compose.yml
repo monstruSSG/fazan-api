@@ -8,6 +8,8 @@ services:
       - mongo_volume:/data/db
     networks:
       - privateFazanNetwork
+    ports:
+      - 27017:27017
   nodejs:
     build: 
       dockerfile: Dockerfile.dev

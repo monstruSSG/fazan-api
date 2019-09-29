@@ -1,34 +1,42 @@
 const usersLogic = require('../../api/v1/user/logic');
+const wordsLogic = require('../../api/v1/word/logic');
 const { busy } = require('../../utils/constants/app');
 
 
-module.exports = (io, socket) => {
+module.exports = socket => {
     socket.on('invitationSent', data => {
-        console.log(`Received invitation request for: ${data.socketId}`);
+        console.log(`Received invitation request for: ${data.socketId}`, data);
 
-        io.to(data.socketId).emit('invitationReceived', { socketId: socket.id });
+        global.io.to(data.socketId).emit('invitationReceived', { socketId: socket.id });
     })
 
     socket.on('invitationAccepted', data => {
         console.log(`Invitation accepted by: ${socket.id}`);
 
         //send 'startGame' to both players
-        io.to(data.socketId).emit('startGame', { socketId: socket.id });
-        io.to(socket.id).emit('startGame', { socketId: data.socketId });
+        wordsLogic.getRandomValidWord().then(word => {
+            global.io.to(data.socketId).emit('startGame', { socketId: socket.id })
+            global.io.to(socket.id).emit('startGame', { socketId: data.socketId })
+            global.io.to(socket.id).emit('gotWord', { word })
+            global.io.to(data.socketId).emit('oponentIsThinking', { word })
+        })
 
         //set users as being busy
-        Promise.all([
-            usersLogic.update(socket.userId,
-                {
-                    status: busy
-                }
-            ),
-            // usersLogic.update(session.userId,
-            //     {
-            //         status: busy
-            //     }
-            // )
-        ])
+        return usersLogic.findOne({ socketId: socket.id }).then(user => {
+            if (!user) return Promise.reject({ message: 'user not found' })
+            return Promise.all([
+                usersLogic.update(socket.userId,
+                    {
+                        status: busy
+                    }
+                ),
+                usersLogic.update(user._id,
+                    {
+                        status: busy
+                    }
+                )
+            ]).catch(err => Promise.reject(err))
+        })
     })
 
     socket.on('invitationDeclined', data => {

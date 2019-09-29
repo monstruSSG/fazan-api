@@ -1,11 +1,9 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const crypto = require('crypto');
 const httpStatus = require('http-status');
 const axios = require('axios');
 
 const database = require('./database');
-const { cantCreateToken } = require('../../../utils/constants/errorMessages');
 const { facebookBaseUrl, facebookGetDataUrl } = require('../../../../config/defaults');
 
 let logic = {

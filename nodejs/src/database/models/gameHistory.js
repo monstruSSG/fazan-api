@@ -8,6 +8,7 @@ const { Schema } = mongoose;
 
 const gamesHistoryModel = new Schema({
     user: { type: Schema.Types.ObjectId, ref: users },
+    oponent: { type: Schema.Types.ObjectId, ref: users },
     outcome: {
         type: String,
         enum: [won, lost],

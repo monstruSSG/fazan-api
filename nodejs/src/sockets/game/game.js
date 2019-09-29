@@ -29,18 +29,20 @@ module.exports = socket => {
                         //oponent lost
                         gameHistoryLogic.create({
                             user: user._id,
+                            oponent: socket.userId,
                             outcome: lost,
                             dateTime: moment().toISOString()
                         }),
                         //you won
                         gameHistoryLogic.create({
                             user: socket.userId,
+                            oponent: user._id,
                             outcome: won,
                             dateTime: moment().toISOString()
                         }),
                         //increase wins and make user available again
                         userLogic.update(
-                            user._id,
+                            socket.userId,
                             {
                                 "$inc": {
                                     wins: 1
@@ -50,7 +52,7 @@ module.exports = socket => {
                         ),
                         //increase loses and make user available again
                         userLogic.update(
-                            socket.userId,
+                            user._id,
                             {
                                 "$inc": {
                                     loses: 1

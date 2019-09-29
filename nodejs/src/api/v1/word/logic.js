@@ -15,7 +15,6 @@ var logic = {
     check: word => database.findOne({ word: word.toLowerCase() })
         .then(found => {
             //word not found
-            console.log("WPRD", word, found)
             if (!found) return Promise.reject({ status: httpStatus.NOT_FOUND })
             return Promise.resolve({ status: httpStatus.OK })
         }),

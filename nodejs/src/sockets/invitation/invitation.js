@@ -1,4 +1,5 @@
 const usersLogic = require('../../api/v1/user/logic');
+const wordsLogic = require('../../api/v1/word/logic');
 const { busy } = require('../../utils/constants/app');
 
 
@@ -13,8 +14,12 @@ module.exports = socket => {
         console.log(`Invitation accepted by: ${socket.id}`);
 
         //send 'startGame' to both players
-        global.io.to(data.socketId).emit('startGame', { socketId: socket.id });
-        global.io.to(socket.id).emit('startGame', { socketId: data.socketId });
+        wordsLogic.getRandomValidWord().then(word => {
+            global.io.to(data.socketId).emit('startGame', { socketId: socket.id })
+            global.io.to(socket.id).emit('startGame', { socketId: data.socketId })
+            global.io.to(socket.id).emit('gotWord', { word })
+            global.io.to(data.socketId).emit('oponentIsThinking', { word })
+        })
 
         //set users as being busy
         return usersLogic.findOne({ socketId: socket.id }).then(user => {
@@ -30,10 +35,7 @@ module.exports = socket => {
                         status: busy
                     }
                 )
-            ]).catch(err => {
-                console.log("HERE1", err)
-                return Promise.reject(err)
-            })
+            ]).catch(err => Promise.reject(err))
         })
     })
 

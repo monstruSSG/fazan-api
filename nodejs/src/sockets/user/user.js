@@ -3,7 +3,7 @@ const { available } = require('../../utils/constants/app');
 
 module.exports =  socket => {
     socket.on('reqConnectedUsers', async () => {
-        let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.userId); 
+        let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id); 
 
         try {
             let usersList =  await userLogic.find({ socketId: connectedSockets /*, status: available */ });
@@ -14,7 +14,7 @@ module.exports =  socket => {
             usersList.forEach(user => usersJson[user.socketId] = user);
  
             //merge users with sockets
-            connectedSockets = connectedSockets.map(socketId => usersJson[socketId]);
+            connectedSockets = connectedSockets.map(socketId => usersJson[socketId]).filter(socket => socket);
             socket.emit('recConnectedUsers', { //get all users but yourself
                 users: connectedSockets
             });

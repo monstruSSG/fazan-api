@@ -4,6 +4,7 @@ const usersHandler = require('./user/user');
 const gameHandler = require('./game/game');
 
 const usersLogic = require('../api/v1/user/logic');
+const constants = require('../utils/constants/app')
 
 
 module.exports = () => {
@@ -25,8 +26,14 @@ module.exports = () => {
             console.log(`Could not update socket to user ${socket.id}`)
             socket.disconnect();
         }
-        socket.on('disconnect', socket => {
+        socket.on('disconnect', async socket => {
             console.log('user disconnected');
+            if(socket.userId){
+                await usersLogic.update({_id: socket.userId}, {
+                    status: constants.available,
+                    playRandom: false
+                })
+            }
         })
     })
 }

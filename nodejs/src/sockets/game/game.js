@@ -7,7 +7,7 @@ const { won, lost, available } = require('../../utils/constants/app');
 
 module.exports = socket => {
     socket.on('sendWord', data => {
-        //check if oponent just lost 
+        //check if opponent just lost 
         wordLogic.check(data.word).then(() => {
             wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() => {  //word exists
                 global.io.to(data.socketId).emit('gotWord', {
@@ -26,17 +26,17 @@ module.exports = socket => {
                     if (!user) return Promise.reject({ message: 'User does not exists ' })
                     //log outcome
                     return Promise.all([
-                        //oponent lost
+                        //opponent lost
                         gameHistoryLogic.create({
                             user: user._id,
-                            oponent: socket.userId,
+                            opponent: socket.userId,
                             outcome: lost,
                             dateTime: moment().toISOString()
                         }),
                         //you won
                         gameHistoryLogic.create({
                             user: socket.userId,
-                            oponent: user._id,
+                            opponent: user._id,
                             outcome: won,
                             dateTime: moment().toISOString()
                         }),
@@ -47,7 +47,11 @@ module.exports = socket => {
                                 "$inc": {
                                     wins: 1
                                 },
-                                status: available
+                                status: available,
+                                inGame: {
+                                    playing: false,
+                                    opponentSocketId: ''
+                                }
                             }
                         ),
                         //increase loses and make user available again
@@ -57,7 +61,11 @@ module.exports = socket => {
                                 "$inc": {
                                     loses: 1
                                 },
-                                status: available
+                                status: available,
+                                inGame: {
+                                    playing: false,
+                                    opponentSocketId: ''
+                                }
                             }
                         )
                     ]).catch(err => {

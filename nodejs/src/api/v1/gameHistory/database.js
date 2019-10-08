@@ -6,11 +6,11 @@ module.exports = {
         .skip(limit.from)
         .limit(limit.limit)
         .populate('user', 'username shortName pictureUrl')
-        .populate('oponent', 'username shortName pictureUrl')
+        .populate('opponent', 'username shortName pictureUrl')
         .lean().exec(),
     findOne: query => gameHistory.findOne(query)
         .populate('user', 'username shortName pictureUrl')
-        .populate('oponent', 'username shortName pictureUrl')
+        .populate('opponent', 'username shortName pictureUrl')
         .lean().exec(),
     create: historyObj => gameHistory.create(historyObj),
     createMany: historyObj => gameHistory.insertMany(historyObj),

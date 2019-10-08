@@ -10,7 +10,7 @@ let startGame = (data, socket) => {
         global.io.to(data.socketId).emit('startGame', { socketId: socket.id })
         global.io.to(socket.id).emit('startGame', { socketId: data.socketId })
         global.io.to(socket.id).emit('gotWord', { word })
-        global.io.to(data.socketId).emit('oponentIsThinking', { word })
+        global.io.to(data.socketId).emit('opponentIsThinking', { word })
     })
 
     //set users as being busy
@@ -19,15 +19,23 @@ let startGame = (data, socket) => {
         return Promise.all([
             usersLogic.update(socket.userId,
                 {
-                    status: busy
+                    status: busy,
+                    inGame: {
+                        opponentSocketId: data.socketId, 
+                        playing: true
+                    }
                 }
             ),
             usersLogic.update(user._id,
                 {
-                    status: busy
+                    status: busy,
+                    inGame: {
+                        opponentSocketId: socket.id, 
+                        playing: true
+                    }
                 }
             )
-        ]).catch(err => Promise.reject(err))
+        ])
     })
 }
 

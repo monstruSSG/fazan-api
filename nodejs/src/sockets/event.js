@@ -28,7 +28,8 @@ module.exports = () => {
         //update socketId to user
         try {
             await usersLogic.update(socket.userId, {
-                socketId: socket.id
+                socketId: socket.id,
+                status: constants.available
             })
             pingHandler(socket);
             invitationHandler(socket);

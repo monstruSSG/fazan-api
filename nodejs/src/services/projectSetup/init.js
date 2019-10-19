@@ -13,7 +13,7 @@ dbConnection().then(() => {
     let wordsArray = []
 
     lineReader.on('line', line => {
-        wordsArray.push({ insertOne: { word: line.trim() } })
+        wordsArray.push({ insertOne: { document: { word: line.trim() } } })
     })
 
     lineReader.on('close', () => {

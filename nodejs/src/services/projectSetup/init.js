@@ -27,6 +27,7 @@ dbConnection().then(() => {
             process.exit(1)
         })
     })
+
 }).catch(err => {
     console.log('Could not connect to database!', err)
 })

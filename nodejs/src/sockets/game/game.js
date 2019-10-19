@@ -1,8 +1,8 @@
-const moment = require('moment');
-const wordLogic = require('../../api/v1/word/logic');
-const gameHistoryLogic = require('../../api/v1/gameHistory/logic');
-const userLogic = require('../../api/v1/user/logic');
-const { won, lost, available } = require('../../utils/constants/app');
+const moment = require('moment')
+const wordLogic = require('../../api/v1/word/logic')
+const gameHistoryLogic = require('../../api/v1/gameHistory/logic')
+const userLogic = require('../../api/v1/user/logic')
+const { won, lost, available } = require('../../utils/constants/app')
 
 
 let gameOver = async data => {
@@ -15,7 +15,8 @@ let gameOver = async data => {
 
 
     global.io.to(lostSocketId).emit('gameOver', {
-        word: data.word
+        word: data.word,
+        alternative: data.alternative ? data.alternative : null
     })
 
     global.io.to(wonSocketId).emit('youWon', {
@@ -91,7 +92,8 @@ module.exports = socket => {
     })
 
     socket.on('iLost', data => {
-        getUsersBySocketIds([data.socketId, socket.id]).then(users => {
+        getUsersBySocketIds([data.socketId, socket.id]).then(async users => {
+            let alternatives =  await wordLogic.checkWordSubstring(data.word)
             gameOver({
                 lostSocketId: socket.id,
                 wonSocketId: data.socketId,
@@ -100,7 +102,8 @@ module.exports = socket => {
                 word: data.word,
                 reason: {
                     timeExpired: true
-                }
+                },
+                alternative: alternatives.word
             })
         })
     })
@@ -122,6 +125,8 @@ module.exports = socket => {
                         wonUserId: users[1]._id,
                         word: data.word,
                         reason: {
+                            opponentDisconnected: false,
+                            timeExpired: false
                         }
                     })
                 })

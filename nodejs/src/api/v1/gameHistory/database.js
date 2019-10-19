@@ -1,4 +1,4 @@
-const { gameHistory } = require('../../../database/models/index');
+const { gameHistory } = require('../../../database/models/index')
 
 
 module.exports = {

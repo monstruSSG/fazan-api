@@ -1,6 +1,6 @@
-const express = require('express');
-const authLogic = require('./logic');
-const router = express.Router();
+const express = require('express')
+const authLogic = require('./logic')
+const router = express.Router()
 
 
 router.route('/login')

@@ -1,4 +1,4 @@
-const { userModel } = require('../../../database/models/index');
+const { userModel } = require('../../../database/models/index')
 
 
 module.exports = {

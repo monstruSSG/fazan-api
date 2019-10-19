@@ -1,5 +1,5 @@
-const httpStatus = require('http-status');
-const database = require('./database');
+const httpStatus = require('http-status')
+const database = require('./database')
 
 
 var logic = {
@@ -9,7 +9,7 @@ var logic = {
             .then(word => {
                 //word not found, game over
                 if (!word) return Promise.reject({ status: httpStatus.NOT_FOUND })
-                return Promise.resolve({ status: httpStatus.OK })
+                return Promise.resolve({ status: httpStatus.OK, word })
             })
     },
     check: word => database.findOne({ word: word.toLowerCase() })

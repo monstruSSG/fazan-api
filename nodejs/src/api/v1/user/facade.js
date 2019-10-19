@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const userLogic = require('./logic');
 const gameHistoryLogic = require('../gameHistory/logic');
+const { available } = require('../../../utils/constants/app');
 
 
 module.exports = {
@@ -19,19 +20,34 @@ module.exports = {
             })
         }
     }),
-    search: async  term => {
-        let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id);
-        let usersList = []
+    getConnected: async (params, sessionUserId) => {
+        let connectedSockets = Object.keys(global.io.sockets.connected);
+
         try {
-            usersList = await userLogic.find({
-                socketId: connectedSockets,
-                status: available,
-                shortName: { $regex: new RegExp(`^${term}`) }
-            });
+            let usersList = []
+            if (params.search)
+                usersList = await userLogic.find({
+                    socketId: connectedSockets,
+                    status: available
+                }, { from: params.from, limit: params.limit });
+            else {
+                usersList = await userLogic.find({
+                    socketId: connectedSockets,
+                    status: available,
+                    shortName: { $regex: new RegExp(`^${params.search.toLowerCase()}`, 'i') }
+                }, { from: params.from, limit: params.limit });
+            }
+
+            //create JSON from users list / faster mapping
+            let usersJson = {}
+
+            usersList.forEach(user => usersJson[user.socketId] = user);
+
+            //merge users with sockets
+            connectedSockets = connectedSockets.map(socketId => usersJson[socketId]).filter(socketId => socketId && usersJson._id !== sessionUserId);
+            return Promise.resolve({ users: connectedSockets });
         } catch (e) {
             return Promise.reject(e);
         }
-        return Promise.resolve({ users: usersList })
-    },
-    getUsers: (query, limit) => userLogic.find(query, limit)
+    }
 }

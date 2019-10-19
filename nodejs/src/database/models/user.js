@@ -42,6 +42,17 @@ const userSchema = new Schema({
     score: {
         type: Number,
         default: 0
+    },
+    playRandom: {
+        type: Boolean,
+        default: false
+    },
+    inGame: {
+        opponentSocketId: String, 
+        playing: {
+            type: Boolean,
+            default: false
+        }
     }
 });
 

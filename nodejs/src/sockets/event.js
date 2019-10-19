@@ -42,16 +42,16 @@ module.exports = () => {
             socket.disconnect();
         }
 
-        //manual disconnect
-        socket.on('exitGame', () => {
-            console.log('user exited game', socket.userId);
-            disconnectUser(socket)
+        //auto disconnect
+        socket.on('disconnectedFromMultiplayer', () => {
+            console.log('user disconnected', socket.userId);
+            disconnectUser(socket);
         })
 
         //auto disconnect
         socket.on('disconnect', () => {
             console.log('user disconnected', socket.userId);
-            disconnectUser(socket)
+            disconnectUser(socket);
         })
     })
 }

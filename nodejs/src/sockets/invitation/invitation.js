@@ -11,6 +11,7 @@ let startGame = (data, socket) => {
         global.io.to(socket.id).emit('startGame', { socketId: data.socketId })
         global.io.to(socket.id).emit('gotWord', { word })
         global.io.to(data.socketId).emit('opponentIsThinking', { word })
+    
     })
 
     //set users as being busy
@@ -42,11 +43,13 @@ let startGame = (data, socket) => {
 module.exports = socket => {
     socket.on('playRandom', async data => {
         try {
-            console.log(`Play randoom: ${data.socketId}`, data);
+            //console.log(`Play randoom: ${data.socketId}`, data);
 
             //get connected users
             let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id)
-            let connectedUsers = await usersLogic.find({ socketId: connectedSockets, status: available })
+            console.log("SOCKETS", connectedSockets)
+            let connectedUsers = await usersLogic.find({ socketId: connectedSockets })
+            console.log("connectedUsers", connectedUsers)
 
             //update me as playRandom
             await usersLogic.update({ _id: socket.userId }, { $set: { playRandom: true, status: busy } })

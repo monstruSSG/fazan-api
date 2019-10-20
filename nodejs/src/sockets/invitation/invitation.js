@@ -36,8 +36,8 @@ let startGame = (data, socket) => {
             )
         ]).then(() =>
             wordsLogic.getRandomValidWord().then(word => {
-                global.io.to(data.socketId).emit('startGame', { socketId: socket.id, opponentName: users[1].shortName })
-                global.io.to(socket.id).emit('startGame', { socketId: data.socketId, opponentName: users[0].shortName })
+                global.io.to(data.socketId).emit('startGame', { socketId: socket.id, opponentName: users[0].shortName })
+                global.io.to(socket.id).emit('startGame', { socketId: data.socketId, opponentName: users[1].shortName })
                 global.io.to(socket.id).emit('gotWord', { word })
                 global.io.to(data.socketId).emit('opponentIsThinking', { word })
                 return Promise.resolve({})

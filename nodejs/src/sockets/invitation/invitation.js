@@ -6,37 +6,45 @@ const helpers = require('../../utils/helpers')
 
 let startGame = (data, socket) => {
     //send 'startGame' to both players
-    wordsLogic.getRandomValidWord().then(word => {
-        global.io.to(data.socketId).emit('startGame', { socketId: socket.id })
-        global.io.to(socket.id).emit('startGame', { socketId: data.socketId })
-        global.io.to(socket.id).emit('gotWord', { word })
-        global.io.to(data.socketId).emit('opponentIsThinking', { word })
-    
-    })
+    return Promise.all([
+        usersLogic.findOne({ socketId: socket.id }),
+        usersLogic.findOne({ socketId: data.socketId })
+    ]).then(users => {
 
-    //set users as being busy
-    return usersLogic.findOne({ socketId: socket.id }).then(user => {
-        if (!user) return Promise.reject({ message: 'user not found' })
+        if (users.length !== 2) return Promise.reject({ message: 'one / more users cannot be found', users })
+
+        //set users as being busy
+        let currentUser = users[0]
         return Promise.all([
             usersLogic.update(socket.userId,
                 {
                     status: busy,
                     inGame: {
-                        opponentSocketId: data.socketId, 
+                        opponentSocketId: data.socketId,
                         playing: true
                     }
                 }
             ),
-            usersLogic.update(user._id,
+            usersLogic.update(currentUser._id,
                 {
                     status: busy,
                     inGame: {
-                        opponentSocketId: socket.id, 
+                        opponentSocketId: socket.id,
                         playing: true
                     }
                 }
             )
-        ])
+        ]).then(() =>
+            wordsLogic.getRandomValidWord().then(word => {
+                global.io.to(data.socketId).emit('startGame', { socketId: socket.id, opponentName: users[1].shortName })
+                global.io.to(socket.id).emit('startGame', { socketId: data.socketId, opponentName: users[0].shortName })
+                global.io.to(socket.id).emit('gotWord', { word })
+                global.io.to(data.socketId).emit('opponentIsThinking', { word })
+                return Promise.resolve({})
+            })
+        )
+    }).catch(err => {
+        console.log("Error at starting game", err)
     })
 }
 
@@ -47,9 +55,9 @@ module.exports = socket => {
 
             //get connected users
             let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id)
-            console.log("SOCKETS", connectedSockets)
+
             let connectedUsers = await usersLogic.find({ socketId: connectedSockets, status: available })
-            console.log("connectedUsers", connectedUsers)
+
 
             //update me as playRandom
             await usersLogic.update({ _id: socket.userId }, { $set: { playRandom: true, status: busy } })

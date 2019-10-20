@@ -16,7 +16,6 @@ let disconnectUser = async socket => {
                 opponentSocketId: ''
             }
         })
-
         global.io.to(user.inGame.opponentSocketId).emit('opponentDisconnected')
     }
 }

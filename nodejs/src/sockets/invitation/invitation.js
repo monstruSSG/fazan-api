@@ -56,7 +56,7 @@ module.exports = socket => {
             //get connected users
             let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id)
 
-            let connectedUsers = await usersLogic.find({ socketId: connectedSockets, status: available })
+            let connectedUsers = await usersLogic.find({ socketId: connectedSockets /*status: available*/ })
 
 
             //update me as playRandom

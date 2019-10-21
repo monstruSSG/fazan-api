@@ -16,14 +16,13 @@ db.serialize(function () {
         wordsArray.push(line.trim())
     })
 
-
-    db.run("CREATE TABLE IF NOT EXISTS words (id int AUTO_INCREMENT, word VARCHAR (255), weight int)")
+    db.run("CREATE TABLE IF NOT EXISTS words (id INTEGER PRIMARY KEY AUTOINCREMENT, word VARCHAR (255), weight INTEGER DEFAULT 0)")
 
     lineReader.on('close', () => {
         var stmt = db.prepare("INSERT INTO words(word) VALUES (?)");
         wordsArray.forEach(word => {
             stmt.run(word, err => {
-                if (!err) return console.log(`${word} inserted`)
+               if (!err) return console.log(`${word} inserted`)
                 console.log(err)
             });
         })
@@ -32,10 +31,37 @@ db.serialize(function () {
             db.each("Select COUNT(*) from words", function (err, row) {
                 console.log(row)
             });
-        });
 
+            //update weight
+            console.log("Now update common words")
+            const lineReaderUsed = readLine.createInterface({
+                input: fs.createReadStream(path.join(__dirname, 'mostUsed.txt'))
+            })
 
+            let mostUsedArray = []
 
-        db.close();
+            lineReaderUsed.on('line', line => {
+                mostUsedArray.push(line.trim())
+            })
+
+            lineReaderUsed.on('close', () => {
+
+                stmt = db.prepare("UPDATE words set weight = 1 where word = ?");
+                mostUsedArray.forEach(word => {
+                    stmt.run(word, err => {
+                        if (!err) return console.log(`${word} updated`)
+                        console.log(err)
+                    });
+                })
+
+                stmt.finalize(err => {
+                    if (!err) console.log("Everything was ok")
+                    console.log("Finish")
+                });
+
+                db.close();
+            })
+        })
+
     })
 });

@@ -17,10 +17,10 @@ db.serialize(function () {
     })
 
 
-    db.run("CREATE TABLE IF NOT EXISTS words (id int AUTO_INCREMENT, name VARCHAR (255), weight int)")
+    db.run("CREATE TABLE IF NOT EXISTS words (id int AUTO_INCREMENT, word VARCHAR (255), weight int)")
 
     lineReader.on('close', () => {
-        var stmt = db.prepare("INSERT INTO words(name) VALUES (?)");
+        var stmt = db.prepare("INSERT INTO words(word) VALUES (?)");
         wordsArray.forEach(word => {
             stmt.run(word, err => {
                 if (!err) return console.log(`${word} inserted`)

@@ -19,6 +19,7 @@ let startGame = (data, socket) => {
             usersLogic.update(socket.userId,
                 {
                     status: busy,
+                    playRandom: false,
                     inGame: {
                         opponentSocketId: data.socketId,
                         playing: true
@@ -28,6 +29,7 @@ let startGame = (data, socket) => {
             usersLogic.update(currentUser._id,
                 {
                     status: busy,
+                    playRandom: false,
                     inGame: {
                         opponentSocketId: socket.id,
                         playing: true
@@ -49,6 +51,13 @@ let startGame = (data, socket) => {
 }
 
 module.exports = socket => {
+
+    socket.on('endPlayRandom', async () => {
+        //update me as playRandom
+        console.log("end play random")
+        await usersLogic.update({ _id: socket.userId }, { $set: { playRandom: false, available: true } })
+    })
+
     socket.on('playRandom', async data => {
         try {
             //console.log(`Play randoom: ${data.socketId}`, data)
@@ -56,11 +65,10 @@ module.exports = socket => {
             //get connected users
             let connectedSockets = Object.keys(global.io.sockets.connected).filter(socketId => socketId !== socket.id)
 
-            let connectedUsers = await usersLogic.find({ socketId: connectedSockets /*status: available*/ })
-
+            let connectedUsers = await usersLogic.find({ socketId: connectedSockets, status: available, playRandom: true })
 
             //update me as playRandom
-            await usersLogic.update({ _id: socket.userId }, { $set: { playRandom: true, status: busy } })
+            await usersLogic.update({ _id: socket.userId }, { $set: { playRandom: true } })
 
             //check if there's another user which plays random
             let disponibleUsers = helpers.shuffle([...connectedUsers])

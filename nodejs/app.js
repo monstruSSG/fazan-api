@@ -19,7 +19,7 @@ const io = socketIo(httpServer)
 const dbConnection = require('./src/database/connection')
 const { notFound, errorHandler, isLoggedHttp, isLoggedSocket } = require('./src/utils/middlewares')
 const socketsHandler = require('./src/sockets/event')
-const QueueConstructor = require('../../utils/Queue')
+const QueueConstructor = require('./src/utils/Queue')
 
 global.playRandomQueue = new QueueConstructor()
 

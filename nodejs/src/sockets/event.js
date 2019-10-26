@@ -10,7 +10,6 @@ let disconnectUser = async socket => {
     if (socket.userId) {
         let user = await usersLogic.update({ _id: socket.userId }, {
             status: constants.available,
-            playRandom: false,
             inGame: {
                 playing: false,
                 opponentSocketId: ''

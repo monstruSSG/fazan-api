@@ -93,7 +93,7 @@ module.exports = socket => {
 
     socket.on('iLost', data => {
         getUsersBySocketIds([data.socketId, socket.id]).then(async users => {
-            let alternatives =  await wordLogic.checkWordSubstring(data.word)
+            let alternatives = await wordLogic.checkWordSubstring(data.word)
             gameOver({
                 lostSocketId: socket.id,
                 wonSocketId: data.socketId,
@@ -110,30 +110,24 @@ module.exports = socket => {
 
     socket.on('sendWord', data => {
         //check if opponent just lost 
-        wordLogic.check(data.word).then(() => {
-            wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() => {  //word exists
-                global.io.to(data.socketId).emit('gotWord', {
-                    word: data.word,
-                    socketId: data.socketId
-                })
-            }).catch(() => {
-                getUsersBySocketIds([data.socketId, socket.id]).then(users => {
-                    gameOver({
-                        lostSocketId: data.id,
-                        wonSocketId: socket.socketId,
-                        lostUserId: users[0]._id,
-                        wonUserId: users[1]._id,
-                        word: data.word,
-                        reason: {
-                            opponentDisconnected: false,
-                            timeExpired: false
-                        }
-                    })
-                })
+        wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() => {  //word exists
+            global.io.to(data.socketId).emit('gotWord', {
+                word: data.word,
+                socketId: data.socketId
             })
         }).catch(() => {
-            global.io.to(socket.id).emit('wordNotExists', {
-                word: data.word
+            getUsersBySocketIds([data.socketId, socket.id]).then(users => {
+                gameOver({
+                    lostSocketId: data.socketId,
+                    wonSocketId: socket.id,
+                    lostUserId: users[0]._id,
+                    wonUserId: users[1]._id,
+                    word: data.word,
+                    reason: {
+                        opponentDisconnected: false,
+                        timeExpired: false
+                    }
+                })
             })
         })
     })

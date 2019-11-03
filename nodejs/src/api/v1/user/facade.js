@@ -23,25 +23,26 @@ module.exports = {
     getConnected: async (params, sessionUserId) => {
         let connectedSockets = Object.keys(global.io.sockets.connected)
         let playRandomArray = global.playRandomQueue.getArray()
+    
         try {
             let usersList = []
             if (!params.search.length)
                 usersList = await userLogic.find({
                     socketId: connectedSockets,
-                    _id: {
-                        $ne: sessionUserId,
-                        $nin: playRandomArray
-                    },
+                    $and: [
+                        {_id: { $ne: sessionUserId }},
+                        {_id: { $nin: playRandomArray }}
+                    ],
                     status: available,
                 }, { from: params.from, limit: params.limit })
             else {
                 usersList = await userLogic.find({
                     socketId: connectedSockets,
                     status: available,
-                    _id: {
-                        $ne: sessionUserId,
-                        $nin: playRandomArray
-                    },
+                    $and: [
+                        {_id: { $ne: sessionUserId }},
+                        {_id: { $nin: playRandomArray }}
+                    ],
                     shortName: { $regex: new RegExp(`^${params.search.toLowerCase()}`, 'i') }
                 }, { from: params.from, limit: params.limit })
             }

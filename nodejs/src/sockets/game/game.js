@@ -7,12 +7,10 @@ const { won, lost, available } = require('../../utils/constants/app')
 
 let gameOver = async data => {
     //async send sockets
-
     let wonSocketId = data.wonSocketId
     let wonUserId = data.wonUserId
     let lostSocketId = data.lostSocketId
     let lostUserId = data.lostUserId
-
 
     global.io.to(lostSocketId).emit('gameOver', {
         word: data.word,

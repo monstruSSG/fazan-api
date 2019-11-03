@@ -1,7 +1,7 @@
 module.exports = function Queue() {
     this.queue = []
     this.enqueue = function (element) {
-        this.queue = [element, ...queue]
+        this.queue = [element, ...this.queue]
     }
     this.dequeue = function () {
         if (this.queue.length === 0)

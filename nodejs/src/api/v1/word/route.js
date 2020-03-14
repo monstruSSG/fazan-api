@@ -1,6 +1,6 @@
-const express = require('express');
-const wordLogic = require('./logic');
-const router = express.Router();
+const express = require('express')
+const wordLogic = require('./logic')
+const router = express.Router()
 
 const config = require('../../../../config/defaults')
 

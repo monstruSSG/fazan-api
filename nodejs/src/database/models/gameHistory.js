@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const moment = require('moment');
-const { gamesHistory, users } = require('../constants');
-const { won, lost } = require('../../utils/constants/app');
+const mongoose = require('mongoose')
+const moment = require('moment')
+const { gamesHistory, users } = require('../constants')
+const { won, lost } = require('../../utils/constants/app')
 
 
-const { Schema } = mongoose;
+const { Schema } = mongoose
 
 const gamesHistoryModel = new Schema({
     user: { type: Schema.Types.ObjectId, ref: users },
@@ -18,6 +18,6 @@ const gamesHistoryModel = new Schema({
         type: Date,
         default: moment().toISOString()
     }
-});
+})
 
-exports.gameHistoryModel = mongoose.model(gamesHistory, gamesHistoryModel);
+exports.gameHistoryModel = mongoose.model(gamesHistory, gamesHistoryModel)

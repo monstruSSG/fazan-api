@@ -1,6 +1,6 @@
-const httpStatus = require('http-status');
-const jwt = require('jsonwebtoken');
-const userLogic = require('../api/v1/user/logic');
+const httpStatus = require('http-status')
+const jwt = require('jsonwebtoken')
+const userLogic = require('../api/v1/user/logic')
 const {
     invalidAuthHeader,
     invalidToken,
@@ -10,11 +10,11 @@ const {
 
 checkAutorisation = async authorisation => {
     //header template: Bearer {token}
-    let splittedHeader = authorisation.split(' ');
+    let splittedHeader = authorisation.split(' ')
     if (splittedHeader.length) {
-        let token = splittedHeader[1];
+        let token = splittedHeader[1]
         try {
-            let decoded = await jwt.verify(token, process.env.JWT_SECRET);
+            let decoded = await jwt.verify(token, process.env.JWT_SECRET)
             if (await userLogic.findById(decoded.userId)) {
                 return Promise.resolve({
                     status: httpStatus.OK,
@@ -24,7 +24,7 @@ checkAutorisation = async authorisation => {
             return Promise.resolve({
                 status: httpStatus.UNAUTHORIZED,
                 message: badCredentials
-            });
+            })
         } catch (error) {
             return Promise.resolve({
                 status: httpStatus.UNAUTHORIZED,
@@ -37,21 +37,21 @@ checkAutorisation = async authorisation => {
 
 module.exports = {
     notFound: (req, res, next) => {
-        let err = new Error('Not found');
-        err.status = httpStatus.NOT_FOUND;
-        next(err);
+        let err = new Error('Not found')
+        err.status = httpStatus.NOT_FOUND
+        next(err)
     },
     errorHandler: (err, req, res, next) => {
         console.log(err)
-        res.status(err.status || httpStatus.BAD_REQUEST);
-        res.json({ error: err });
+        res.status(err.status || httpStatus.BAD_REQUEST)
+        res.json({ error: err })
     },
     isLoggedHttp: (req, res, next) => {
         if (!req.headers.authorisation) {
             return res.err({
                 status: httpStatus.UNAUTHORIZED,
                 message: invalidAuthHeader
-            });
+            })
         }
         return checkAutorisation(req.headers.authorisation)
             .then(authorisationResponse => {
@@ -66,7 +66,7 @@ module.exports = {
             return next(new Error({
                 status: httpStatus.UNAUTHORIZED,
                 message: invalidAuthHeader
-            }));
+            }))
         }
 
         return checkAutorisation(socket.handshake.headers.authorisation)
@@ -78,4 +78,4 @@ module.exports = {
                 return next(new Error(authorisationResponse))
             })
     }
-};
+}

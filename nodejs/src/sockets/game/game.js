@@ -1,21 +1,20 @@
-const moment = require('moment');
-const wordLogic = require('../../api/v1/word/logic');
-const gameHistoryLogic = require('../../api/v1/gameHistory/logic');
-const userLogic = require('../../api/v1/user/logic');
-const { won, lost, available } = require('../../utils/constants/app');
+const moment = require('moment')
+const wordLogic = require('../../api/v1/word/logic')
+const gameHistoryLogic = require('../../api/v1/gameHistory/logic')
+const userLogic = require('../../api/v1/user/logic')
+const { won, lost, available } = require('../../utils/constants/app')
 
 
 let gameOver = async data => {
     //async send sockets
-
     let wonSocketId = data.wonSocketId
     let wonUserId = data.wonUserId
     let lostSocketId = data.lostSocketId
     let lostUserId = data.lostUserId
 
-
     global.io.to(lostSocketId).emit('gameOver', {
-        word: data.word
+        word: data.word,
+        alternative: data.alternative ? data.alternative : null
     })
 
     global.io.to(wonSocketId).emit('youWon', {
@@ -91,7 +90,8 @@ module.exports = socket => {
     })
 
     socket.on('iLost', data => {
-        getUsersBySocketIds([data.socketId, socket.id]).then(users => {
+        getUsersBySocketIds([data.socketId, socket.id]).then(async users => {
+            let alternatives = await wordLogic.checkWordSubstring(data.word)
             gameOver({
                 lostSocketId: socket.id,
                 wonSocketId: data.socketId,
@@ -100,35 +100,32 @@ module.exports = socket => {
                 word: data.word,
                 reason: {
                     timeExpired: true
-                }
+                },
+                alternative: alternatives.word
             })
         })
     })
 
     socket.on('sendWord', data => {
         //check if opponent just lost 
-        wordLogic.check(data.word).then(() => {
-            wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() => {  //word exists
-                global.io.to(data.socketId).emit('gotWord', {
-                    word: data.word,
-                    socketId: data.socketId
-                })
-            }).catch(() => {
-                getUsersBySocketIds([data.socketId, socket.id]).then(users => {
-                    gameOver({
-                        lostSocketId: data.id,
-                        wonSocketId: socket.socketId,
-                        lostUserId: users[0]._id,
-                        wonUserId: users[1]._id,
-                        word: data.word,
-                        reason: {
-                        }
-                    })
-                })
+        wordLogic.checkWordSubstring(data.word.toLowerCase()).then(() => {  //word exists
+            global.io.to(data.socketId).emit('gotWord', {
+                word: data.word,
+                socketId: data.socketId
             })
         }).catch(() => {
-            global.io.to(socket.id).emit('wordNotExists', {
-                word: data.word
+            getUsersBySocketIds([data.socketId, socket.id]).then(users => {
+                gameOver({
+                    lostSocketId: data.socketId,
+                    wonSocketId: socket.id,
+                    lostUserId: users[0]._id,
+                    wonUserId: users[1]._id,
+                    word: data.word,
+                    reason: {
+                        opponentDisconnected: false,
+                        timeExpired: false
+                    }
+                })
             })
         })
     })

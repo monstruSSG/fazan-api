@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const { users } = require('../constants');
-const { available, busy } = require('../../utils/constants/app');
+const mongoose = require('mongoose')
+const { users } = require('../constants')
+const { available, busy } = require('../../utils/constants/app')
 
 
-const { Schema } = mongoose;
+const { Schema } = mongoose
 
 const userSchema = new Schema({
     username: String,
@@ -43,10 +43,6 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
-    playRandom: {
-        type: Boolean,
-        default: false
-    },
     inGame: {
         opponentSocketId: String, 
         playing: {
@@ -54,7 +50,7 @@ const userSchema = new Schema({
             default: false
         }
     }
-});
+})
 
 userSchema.methods.toJSON = function () {
     return {
@@ -68,4 +64,4 @@ userSchema.methods.toJSON = function () {
     }
 }
 
-exports.userModel = mongoose.model(users, userSchema);
+exports.userModel = mongoose.model(users, userSchema)

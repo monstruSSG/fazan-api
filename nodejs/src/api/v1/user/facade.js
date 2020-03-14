@@ -1,7 +1,7 @@
-const httpStatus = require('http-status');
-const userLogic = require('./logic');
-const gameHistoryLogic = require('../gameHistory/logic');
-const { available } = require('../../../utils/constants/app');
+const httpStatus = require('http-status')
+const userLogic = require('./logic')
+const gameHistoryLogic = require('../gameHistory/logic')
+const { available } = require('../../../utils/constants/app')
 
 
 module.exports = {
@@ -21,33 +21,45 @@ module.exports = {
         }
     }),
     getConnected: async (params, sessionUserId) => {
-        let connectedSockets = Object.keys(global.io.sockets.connected);
-
+        let connectedSockets = Object.keys(global.io.sockets.connected)
+        let playRandomArray = global.playRandomQueue.getArray()
+    
         try {
             let usersList = []
-            if (params.search)
+            if (!params.search.length)
                 usersList = await userLogic.find({
                     socketId: connectedSockets,
-                    status: available
-                }, { from: params.from, limit: params.limit });
+                    $and: [
+                        {_id: { $ne: sessionUserId }},
+                        {_id: { $nin: playRandomArray }}
+                    ],
+                    status: available,
+                }, { from: params.from, limit: params.limit })
             else {
                 usersList = await userLogic.find({
                     socketId: connectedSockets,
                     status: available,
+                    $and: [
+                        {_id: { $ne: sessionUserId }},
+                        {_id: { $nin: playRandomArray }}
+                    ],
                     shortName: { $regex: new RegExp(`^${params.search.toLowerCase()}`, 'i') }
-                }, { from: params.from, limit: params.limit });
+                }, { from: params.from, limit: params.limit })
             }
 
             //create JSON from users list / faster mapping
             let usersJson = {}
 
-            usersList.forEach(user => usersJson[user.socketId] = user);
+            usersList.forEach(user => usersJson[user.socketId] = user)
 
             //merge users with sockets
-            connectedSockets = connectedSockets.map(socketId => usersJson[socketId]).filter(socketId => socketId && usersJson._id !== sessionUserId);
-            return Promise.resolve({ users: connectedSockets });
+            connectedSockets = connectedSockets.map(socketId => usersJson[socketId]).filter(socketId =>
+                socketId &&
+                usersJson._id !== sessionUserId
+            )
+            return Promise.resolve({ users: connectedSockets })
         } catch (e) {
-            return Promise.reject(e);
+            return Promise.reject(e)
         }
     }
 }

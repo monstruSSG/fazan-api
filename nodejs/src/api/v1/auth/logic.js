@@ -1,10 +1,11 @@
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
-const httpStatus = require('http-status');
-const axios = require('axios');
+const jwt = require('jsonwebtoken')
+const moment = require('moment')
+const httpStatus = require('http-status')
+const axios = require('axios')
 
-const database = require('./database');
-const { facebookBaseUrl, facebookGetDataUrl } = require('../../../../config/defaults');
+const database = require('./database')
+const { facebookBaseUrl, facebookGetDataUrl } = require('../../../../config/defaults')
+
 
 let logic = {
     login: ({ fbToken }) => axios.get(`${facebookBaseUrl}?access_token=${fbToken}`)
@@ -38,4 +39,4 @@ let logic = {
         .then(user => Promise.resolve({ status: httpStatus.OK, user }))
 }
 
-module.exports = logic;
+module.exports = logic

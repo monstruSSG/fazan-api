@@ -26,6 +26,8 @@ services:
       - MONGODB_URI=mongodb://mongo:27017/fazan
     ports:
       - 9000:9000
+    dns:
+      - 8.8.8.8
     networks:
       - privateFazanNetwork
   nginx: 

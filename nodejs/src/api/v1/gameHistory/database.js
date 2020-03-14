@@ -7,6 +7,7 @@ module.exports = {
         .limit(limit.limit)
         .populate('user', 'username shortName pictureUrl')
         .populate('opponent', 'username shortName pictureUrl')
+        .sort({ _id: -1 })
         .lean().exec(),
     findOne: query => gameHistory.findOne(query)
         .populate('user', 'username shortName pictureUrl')

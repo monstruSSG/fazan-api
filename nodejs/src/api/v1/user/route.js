@@ -18,5 +18,10 @@ router.route('/profile')
         .then(response => res.done(response))
         .catch(err => res.err(err)))
 
+router.route('/leaderboard')
+    .get((_, res) => userFacade.getLeaderboard()
+        .then(res.send)
+        .catch(res.err))
+
 
 module.exports = router

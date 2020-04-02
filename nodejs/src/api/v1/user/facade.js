@@ -5,6 +5,7 @@ const { available } = require('../../../utils/constants/app')
 
 
 module.exports = {
+    getLeaderboard: () => userLogic.find({ sort: { score: -1 } }),
     getProfile: userId => Promise.all([
         userLogic.findById(userId),
         gameHistoryLogic.find({ user: userId })
@@ -23,15 +24,15 @@ module.exports = {
     getConnected: async (params, sessionUserId) => {
         let connectedSockets = Object.keys(global.io.sockets.connected)
         let playRandomArray = global.playRandomQueue.getArray()
-    
+
         try {
             let usersList = []
             if (!params.search.length)
                 usersList = await userLogic.find({
                     socketId: connectedSockets,
                     $and: [
-                        {_id: { $ne: sessionUserId }},
-                        {_id: { $nin: playRandomArray }}
+                        { _id: { $ne: sessionUserId } },
+                        { _id: { $nin: playRandomArray } }
                     ],
                     status: available,
                 }, { from: params.from, limit: params.limit })
@@ -40,8 +41,8 @@ module.exports = {
                     socketId: connectedSockets,
                     status: available,
                     $and: [
-                        {_id: { $ne: sessionUserId }},
-                        {_id: { $nin: playRandomArray }}
+                        { _id: { $ne: sessionUserId } },
+                        { _id: { $nin: playRandomArray } }
                     ],
                     shortName: { $regex: new RegExp(`^${params.search.toLowerCase()}`, 'i') }
                 }, { from: params.from, limit: params.limit })

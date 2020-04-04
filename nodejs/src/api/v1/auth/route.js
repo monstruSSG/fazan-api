@@ -3,9 +3,15 @@ const authLogic = require('./logic')
 const router = express.Router()
 
 
-router.route('/login')
+router.route('/login/fb')
     .post((req, res) =>
-        authLogic.login(req.body)
+        authLogic.fbLogin(req.body)
+            .then(response => res.done(response))
+            .catch(err => res.err(err)))
+
+router.route('/login/gmail')
+    .post((req, res) =>
+        authLogic.gmailLogin(req.body)
             .then(response => res.done(response))
             .catch(err => res.err(err)))
 

@@ -39,7 +39,7 @@ let logic = {
         }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
 
         if (user.deviceId !== deviceId) {
-            await database.findUserByIdAndUpdate(user._id, { deviceId })
+            user = await database.findUserByIdAndUpdate(user._id, { deviceId })
         }
 
         return {
@@ -71,15 +71,13 @@ let logic = {
         }
 
         if (user.deviceId !== deviceId) {
-            await database.findUserByIdAndUpdate(user._id, { deviceId })
+            user = await database.findUserByIdAndUpdate(user._id, { deviceId })
         }
 
         let token = jwt.sign({
             userId: user._id,
             timestamp: moment().format()
         }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
-
-        console.log('user', user)
 
         return {
             user,

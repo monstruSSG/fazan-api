@@ -1,1 +1,4 @@
 .history
+.idea
+node_modules
+nodejs/config/firebase-conf.json

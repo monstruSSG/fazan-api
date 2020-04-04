@@ -12,8 +12,17 @@ dbConnection().then(() => {
 
     let wordsArray = []
 
+    let excludePrefix = ['nt', 'ns', 'rb', 'mn', 'rt', 'rn', 'lf', 'ng', 'nd', 'rn', 'rd', 'uu', 'lt', 'ft', 'lc', 'rs', 'mb',
+        'ee', 'rv', 'ct', 'mf', 'nc']
+
     lineReader.on('line', line => {
-        wordsArray.push({ insertOne: { document: { word: line.trim() } } })
+        if (
+            wordsArray.findIndex(query => query.insertOne.document.word === line.trim()) < 0 &&  //does not already exists in list and
+            excludePrefix.indexOf(line.substring(0, 2) < 0) //does not start with excludePrefix
+        ) {
+            console.log(line)
+            wordsArray.push({ insertOne: { document: { word: line.trim() } } })
+        }
     })
 
     lineReader.on('close', () => {

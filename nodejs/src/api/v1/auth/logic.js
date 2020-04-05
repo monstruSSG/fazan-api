@@ -8,35 +8,83 @@ const { facebookBaseUrl, facebookGetDataUrl } = require('../../../../config/defa
 
 
 let logic = {
-    login: ({ fbToken }) => axios.get(`${facebookBaseUrl}?access_token=${fbToken}`)
-        .then(() => axios.get(`${facebookGetDataUrl}/me?fields=name,short_name,picture&access_token=${fbToken}`))
-        .then(async ({ data }) => {
-            let user = await database.findOne({ facebookId: data.id })
+    fbLogin: async ({ fbToken, deviceId }) => {
+        // Test if fbToken is valid
+        await axios.get(`${facebookBaseUrl}?access_token=${fbToken}`)
+        let { data } = await axios.get(`${facebookGetDataUrl}/me?fields=name,short_name,picture&access_token=${fbToken}`)
 
-            if (!user) {
-                return database.create({
-                    username: data.name,
-                    shortName: data.short_name,
-                    pictureUrl: data.picture.data.url,
-                    facebookId: data.id
-                }).then(createdUser => Promise.resolve({
-                    user: createdUser, 
-                    token: jwt.sign({ userId: createdUser._id, timestamp: moment().format() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
-                }))
-            }
+        let user = await database.findOne({ facebookId: data.id })
 
-            let updateUser = await database.findUserByIdAndUpdate(user._id, { 
+        if (!user) {
+            let createdUser = await database.create({
                 username: data.name,
+                deviceId,
                 shortName: data.short_name,
-                pictureUrl: data.picture.data.url
-            }).then(updatedUser => Promise.resolve({
-                user: updatedUser,
-                token: jwt.sign({ userId: updatedUser._id, timestamp: moment().format() }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
-            }))
+                pictureUrl: data.picture.data.url,
+                facebookId: data.id,
+            })
 
-            return Promise.resolve(updateUser)
-        })
-        .then(user => Promise.resolve({ status: httpStatus.OK, user }))
+            return {
+                user: createdUser,
+                token: jwt.sign({
+                    userId: createdUser._id,
+                    timestamp: moment().format()
+                }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
+            }
+        }
+
+        let token = jwt.sign({
+            userId: user._id,
+            timestamp: moment().format()
+        }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
+
+        if (user.deviceId !== deviceId) {
+            user = await database.findUserByIdAndUpdate(user._id, { deviceId })
+        }
+
+        return {
+            user,
+            token
+        }
+    },
+    gmailLogin: async ({ gmailToken, id, deviceId }) => {
+        let user = await database.findOne({ googleId: id });
+
+        if (!user) {
+            let userInfo = jwt.decode(gmailToken);
+
+            let newUser = await database.create({
+                username: userInfo.given_name,
+                shortName: userInfo.given_name,
+                pictureUrl: userInfo.picture,
+                googleId: id,
+                deviceId
+            });
+
+            return {
+                user: newUser,
+                token: jwt.sign({
+                    userId: newUser._id,
+                    timestamp: moment().format()
+                }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
+            };
+        }
+
+        if (user.deviceId !== deviceId) {
+            user = await database.findUserByIdAndUpdate(user._id, { deviceId })
+        }
+
+        let token = jwt.sign({
+            userId: user._id,
+            timestamp: moment().format()
+        }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION })
+
+        return {
+            user,
+            token
+        };
+
+    }
 }
 
 module.exports = logic
